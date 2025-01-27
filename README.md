@@ -1,4 +1,4 @@
 # Python Cardgame
 ### Cabo but digital
 #
-There is a [Dokumentation](docs/Documentation.md).
+There is a [documentation](docs/Documentation.md).
