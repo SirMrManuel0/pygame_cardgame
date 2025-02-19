@@ -1,3 +1,19 @@
 {
-
+    "cards": {
+        "Karte-00": "cards/Karte-00.png",
+        "Karte-01": "cards/Karte-01.png",
+        "Karte-02": "cards/Karte-02.png",
+        "Karte-03": "cards/Karte-03.png",
+        "Karte-04": "cards/Karte-04.png",
+        "Karte-05": "cards/Karte-05.png",
+        "Karte-06": "cards/Karte-06.png",
+        "Karte-07": "cards/Karte-07.png",
+        "Karte-08": "cards/Karte-08.png",
+        "Karte-09": "cards/Karte-09.png",
+        "Karte-10": "cards/Karte-10.png",
+        "Karte-11": "cards/Karte-11.png",
+        "Karte-12": "cards/Karte-12.png",
+        "Karte-13": "cards/Karte-13.png",
+        "Karte-Rueck": "cards/Karte-Rueck.png"
+    }
 }

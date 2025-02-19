@@ -43,7 +43,7 @@ def get_path_resource(*way) -> str:
         raise ArgumentError(4,
                             msg=f"There is no given path for this request in 'resources.json'",
                             wrong_argument=way)
-    return get_path_abs(os.path.join("..\\resources", sub_path))
+    return get_path_abs(os.path.join("..\\resources", "\\" + sub_path))
 
 def run() -> None:
     ...
