@@ -1,6 +1,6 @@
 import os
 import json
-from game import ArgumentError
+from game.errors import ArgumentError
 
 def get_path_abs(relative_path: str) -> str:
     """

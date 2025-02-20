@@ -1,4 +1,4 @@
-from game import CaboError, StateError, ArgumentError
+from game.errors import *
 from enum import Enum
 
 class Shuffle(Enum):
@@ -19,7 +19,7 @@ class Card:
     def __init__(self, value: int = 0):
         self._value = value
 
-    def effect(self) -> int:
+    def effect(self) -> Effect | None:
         if self._value in (7, 8):
             return Effect.PEEK
         elif self._value in (9, 10):
