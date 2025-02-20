@@ -1,9 +1,10 @@
-from deck import Deck, Card
-from game import CaboError, StateError, ArgumentError
+from game.deck import Deck, Card
+from game.errors import *
 
 
 class PlayerDeck(Deck):
     def __init__(self, cards: list):
+        super().__init__()
         self._cards = cards
 
     def take(self, card: int) -> Card:

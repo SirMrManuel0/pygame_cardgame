@@ -1,5 +1,5 @@
-from deck import Deck, Shuffle, Card, DiscardPile
-from game import CaboError, StateError, ArgumentError
+from game.deck import Deck, Shuffle, Card, DiscardPile
+from game.errors import *
 
 class GameDeck(Deck):
     def __init__(self):
@@ -10,15 +10,20 @@ class GameDeck(Deck):
     def draw(self) -> Card:
         return self._cards.pop(0)
 
-    def shuffle(self, kind: int = Shuffle.DUMP) -> None:
+    def shuffle(self, kind: Shuffle = Shuffle.DUMP) -> None:
         if kind == Shuffle.NONE: return
-        func: str = "_shuffle_" + str(kind) + "()"
-        eval(func)
+        shuffle_kinds: dict = {
+            Shuffle.DUMP: self._shuffle_0
+        }
+        shuffle_kinds[kind]()
 
     def _shuffle_0(self) -> None:
         ...
 
-    def update(self, pile: DiscardPile, shuffle: int = Shuffle.DUMP) -> None:
+    def length(self) -> int:
+        return len(self._cards)
+
+    def update(self, pile: DiscardPile, shuffle: Shuffle = Shuffle.DUMP) -> None:
         pile_list: list = pile.get_all()
         pile.set([pile_list.pop(0)])
         self._cards += pile_list

@@ -1,5 +1,5 @@
-from deck import Deck, Shuffle, Card, GameDeck
-from game import CaboError, StateError, ArgumentError
+from game.deck import Deck, Shuffle, Card, GameDeck
+from game.errors import *
 
 class DiscardPile(Deck):
     def __init__(self):
@@ -20,5 +20,5 @@ class DiscardPile(Deck):
     def set(self, cards: list) -> None:
         self._cards = cards
 
-    def reset(self, gameDeck: GameDeck, shuffle: int = Shuffle.DUMP) -> None:
-        gameDeck.update(self, shuffle)
+    def reset(self, game_deck: GameDeck, shuffle: int = Shuffle.DUMP) -> None:
+        game_deck.update(self, shuffle)
