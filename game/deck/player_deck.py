@@ -17,3 +17,9 @@ class PlayerDeck(Deck):
         old: Card = self._cards[old_card]
         self._cards[old_card] = new_card
         return old
+
+    def get_cards(self) -> list:
+        return [*self._cards]
+
+    def set_card(self, cid: int, card: Card) -> None:
+        self._cards[cid] = card
