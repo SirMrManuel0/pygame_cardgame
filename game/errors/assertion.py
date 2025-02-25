@@ -1,8 +1,8 @@
 from game.errors import ArgumentError, StateError, CaboError
 
 
-def assert_type(var, type, code: int, msg: str = None, right_arg=None) -> None:
-    if not isinstance(var, type):
+def assert_type(var, type_, code: int, msg: str = None, right_arg=None) -> None:
+    if not isinstance(var, type_):
         raise ArgumentError(code, wrong_argument=var, right_argument=right_arg, msg=msg)
 
 
@@ -26,3 +26,6 @@ def assert_equals(var, equaled, code: int, msg: str = None, right_arg=None) -> N
     if var != equaled:
         raise ArgumentError(code, wrong_argument=var, right_argument=right_arg, msg=msg)
 
+def assert_type_list(var: list | tuple | set, type_, code: int, msg: str = None, right_arg=None) -> None:
+    if any([not isinstance(i, type_) for i in var]):
+        raise ArgumentError(code, wrong_argument=var, right_argument=right_arg, msg=msg)
