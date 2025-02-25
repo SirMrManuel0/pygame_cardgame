@@ -1,15 +1,17 @@
 # from game import get_path_abs, get_path_resource
 from enum import Enum
 
-from game import Player
+from .player import Player
 from game.errors import *
 from game.deck import GameDeck, DiscardPile, Card, Shuffle
 from game.event_handler import LogicEvents, LogicEventHandler
+from game.deck.base import Effect
 
 
 class DrawOptions(Enum):
     DISCARD_PILE: int = 0
     GAME_DECK: int = 1
+
 
 class CaboLogic:
     def __init__(self, player_count: int = 4, start_card_count: int = 4):
@@ -51,6 +53,41 @@ class CaboLogic:
         self._players[player_id].set_active_card(card)
         self.check_empty_deck()
 
+    def discard(self, player_id: int) -> None:
+        card: Card = self._players[player_id].get_active_card()
+        self._players[player_id].set_active_card(None)
+        self._discard_pile.add(card)
+        self._execute_effect(card.effect(), player_id)
+
+    def restock_deck(self, kind: Shuffle) -> None:
+        self._game_deck.update(self._discard_pile, kind)
+
+    def swap_self(self, player_id: int, swaping_card: int) -> None:
+        card: Card = self._players[player_id].get_active_card()
+        card_swaped: Card = self._players[player_id].get_hidden_card(swaping_card)
+        self._players[player_id].set_active_card(card_swaped)
+        self._players[player_id].set_hidden_card(swaping_card, card)
+
+    def _execute_effect(self, effect: Effect, player_id: int) -> None:
+        ef_dict: dict = {
+            Effect.PEEK: LogicEvents.PEEK_EFFECT,
+            Effect.SPY: LogicEvents.SPY_EFFECT,
+            Effect.SWAP: LogicEvents.SWAP_EFFECT
+        }
+        self._event_handler.add_event(ef_dict[effect], player_id)
+
+    def _swap_effect(self, player_id: int, enemy_id: int, swap_card_player: int, swap_card_enemy: int) -> None:
+        card: Card = self._players[player_id].get_hidden_card(swap_card_player)
+        card_swaped: Card = self._players[enemy_id].get_hidden_card(swap_card_enemy)
+        self._players[player_id].set_hidden_card(swap_card_player, card_swaped)
+        self._players[enemy_id].set_hidden_card(swap_card_enemy, card)
+
+    def _peek_effect(self, player_id: int, peek_card: int) -> Card:
+        return self._players[player_id].get_hidden_card(peek_card)
+
+    def _spy_effect(self, enemy_id: int, spy_card: int) -> Card:
+        return self._peek_effect(enemy_id, spy_card)
+
     def check_empty_deck(self) -> bool:
         if self._game_deck.length() <= 0:
             self._event_handler.add_event(LogicEvents.EMPTY_DECK)
@@ -59,4 +96,3 @@ class CaboLogic:
 
     def fill_game_deck(self, shuffle: Shuffle) -> None:
         self._game_deck.update(self._discard_pile, shuffle)
-        self._event_handler.remove_event_by_kind(LogicEvents.EMPTY_DECK)
