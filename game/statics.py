@@ -1,6 +1,7 @@
 import os
 import json
-from game.errors import ArgumentError
+from game.errors import ArgumentError, assertion
+from game.gui import GuiHandler
 
 def get_path_abs(relative_path: str) -> str:
     """
@@ -24,11 +25,8 @@ def get_path_resource(*way) -> str:
     :param: way
     :return: abs path to ressource
     """
-    if any([not isinstance(step, str) for step in way]):
-        raise ArgumentError(2,
-                            msg=f"Only strings can be in the way.",
-                            wrong_argument=way,
-                            right_argument=["ex", "ample"])
+    assertion.assert_type_list(way, str, 2, msg=f"Only strings can be in the way.",  right_arg=["ex", "ample"])
+
     with open(get_path_abs("..\\resources\\resources.json"), "r", encoding="utf-8") as js:
         look_up: dict = json.load(js)
     sub_path: dict = look_up
@@ -39,11 +37,8 @@ def get_path_resource(*way) -> str:
                                     "\nOr there are too many args.",
                                 wrong_argument=way)
         sub_path = sub_path[step]
-    if not isinstance(sub_path, str):
-        raise ArgumentError(4,
-                            msg=f"There is no given path for this request in 'resources.json'",
-                            wrong_argument=way)
-    return get_path_abs(os.path.join("..\\resources", "\\" + sub_path))
+    assertion.assert_type(sub_path, str, 4, msg=f"There is no given path for this request in 'resources.json'")
+    return get_path_abs(os.path.join("..\\resources", "\\" + str(sub_path)))
 
 def run() -> None:
-    ...
+    GuiHandler()

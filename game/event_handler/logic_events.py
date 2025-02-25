@@ -69,3 +69,4 @@ class LogicEventHandler:
         if len(self._events) > 0:
             return self._events.pop(0)
         raise StopIteration
+    
