@@ -2,9 +2,9 @@ import errors
 import deck
 import event_handler
 
-from .statics import get_path_resource, run, get_path_abs
-from .logic import CaboLogic
-from .player import Player
+from game.statics import *
+from game.logic import CaboLogic
+from game.player import Player
 
 __all__ = [
     "get_path_abs",
@@ -14,5 +14,6 @@ __all__ = [
     "deck",
     "Player",
     "errors",
-    "event_handler"
+    "event_handler",
+    "rnd"
 ]
