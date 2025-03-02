@@ -1,6 +1,6 @@
-from start import GuiHandler
-from window import Window
-from useful_classes import *
+from .start import *
+from .window import Window
+from .useful_classes import *
 
 __all__ = [
     "GuiHandler",

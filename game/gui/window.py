@@ -1,7 +1,7 @@
 import pygame
 
-from game.gui import Dimension
+import game.gui as gui
 
 class Window:
-    def __init__(self, dimensions: Dimension):
+    def __init__(self, dimensions):
         ...
