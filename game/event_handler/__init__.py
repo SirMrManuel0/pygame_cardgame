@@ -1,4 +1,4 @@
-from logic_events import LogicEvent, LogicEvents, LogicEventHandler
+from .logic_events import LogicEvent, LogicEvents, LogicEventHandler
 
 __all__ = [
     "LogicEvent",

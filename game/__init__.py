@@ -1,6 +1,6 @@
-import errors
-import deck
-import event_handler
+import game.errors
+import game.deck
+import game.event_handler
 
 from game.statics import *
 from game.logic import CaboLogic
