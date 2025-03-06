@@ -96,3 +96,22 @@ class CaboLogic:
 
     def fill_game_deck(self, shuffle: Shuffle) -> None:
         self._game_deck.update(self._discard_pile, shuffle)
+
+    def get_winner(self) -> list:
+        min_score = 9999
+        min_players = list()
+
+        for player in self._players:
+            player_card_value = player.get_score()
+
+            if player_card_value < min_score:
+                min_score = player_card_value
+                min_players = [player]
+            elif player_card_value == min_score:
+                min_players.append(player)
+
+        return min_players
+
+    def get_score_board(self) -> list:
+        return sorted(self._players, key=lambda player:player.get_score())
+

@@ -23,3 +23,9 @@ class PlayerDeck(Deck):
 
     def set_card(self, cid: int, card: Card) -> None:
         self._cards[cid] = card
+
+    def sum(self) -> int:
+        value: int = 0
+        for card in self._cards:
+            value += card.get_value()
+        return value

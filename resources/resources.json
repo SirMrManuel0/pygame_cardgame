@@ -15,5 +15,10 @@
         "Karte-12": "cards/Karte-12.png",
         "Karte-13": "cards/Karte-13.png",
         "Karte-Rueck": "cards/Karte-Rueck.png"
+    },
+    "icons": {
+        "black": "icons/black.png",
+        "purple": "icons/purple.png",
+        "white": "icons/white.png"
     }
 }
