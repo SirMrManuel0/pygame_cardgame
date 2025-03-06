@@ -19,6 +19,9 @@ class Card:
     def __init__(self, value: int = 0):
         self._value = value
 
+    def get_value(self):
+        return self._value
+
     def effect(self) -> Effect | None:
         if self._value in (7, 8):
             return Effect.PEEK
@@ -26,3 +29,4 @@ class Card:
             return Effect.SPY
         elif self._value in (11, 12):
             return Effect.SWAP
+        return Effect.NONE

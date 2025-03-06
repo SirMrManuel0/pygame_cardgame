@@ -15,5 +15,6 @@ __all__ = [
     "Player",
     "errors",
     "event_handler",
-    "rnd"
+    "rnd",
+    "is_dark"
 ]

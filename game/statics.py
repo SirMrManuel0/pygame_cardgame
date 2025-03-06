@@ -1,9 +1,11 @@
 import os
 import json
 import numpy as np
+import darkdetect
 
 from game.errors import ArgumentError, ArgumentCodes, assertion
 from game.gui import GuiHandler
+
 
 def get_path_abs(relative_path: str) -> str:
     """
@@ -43,10 +45,13 @@ def get_path_resource(*way) -> str:
         sub_path = sub_path[step]
     assertion.assert_type(sub_path, str, ArgumentError, code=ArgumentCodes.NOT_STRING,
                           msg=f"There is no given path for this request in 'resources.json'")
-    return get_path_abs(os.path.join("..\\resources", "\\" + str(sub_path)))
+    return get_path_abs("../resources" + "/" + str(sub_path))
 
 def rnd(x: float) -> float:
     return float(np.round(x, 8))
 
 def run() -> None:
     GuiHandler()
+
+def is_dark() -> bool:
+    return darkdetect.isDark()

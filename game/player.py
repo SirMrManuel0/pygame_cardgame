@@ -26,3 +26,9 @@ class Player:
 
     def set_hidden_card(self, cid: int, card: Card) -> None:
         self._hidden_cards.set_card(cid, card)
+
+    def get_deck(self) -> PlayerDeck:
+        return self._hidden_cards
+
+    def get_score(self) -> int:
+        return self._hidden_cards.sum()
