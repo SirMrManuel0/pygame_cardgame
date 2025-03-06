@@ -14,9 +14,11 @@ class GuiHandler:
         if instant_run:
             self.run()
 
-
-
     def run(self) -> None:
+        home_window = self.create_home_window()
+        home_window.run()
+
+    def create_home_window(self):
         home_window = gui.Window(self._base_dimension, "Cabo")
         pygame.draw.rect(home_window.get_screen(), (255, 0, 0), (350, 250, 100, 100))
-        home_window.run()
+        return home_window
