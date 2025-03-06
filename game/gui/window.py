@@ -1,5 +1,5 @@
 import pygame
-
+import game
 import game.gui as gui
 
 class Window:
@@ -12,6 +12,11 @@ class Window:
         self._screen = pygame.display.set_mode(self._dimension.get_dimensions())
 
         pygame.display.set_caption(self._title)
+
+        if game.is_dark():
+            pygame.display.set_icon(pygame.image.load(game.get_path_resource("icons", "purple")))
+
+
 
     def add_event(self, event_type: int, func):
         if event_type in self._events:
@@ -43,3 +48,6 @@ class Window:
             self._clock.tick(60)
 
         pygame.quit()
+
+    def get_screen(self):
+        return self._screen
