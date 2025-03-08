@@ -47,6 +47,7 @@ class ArgumentCodes(Enum):
     NOT_SHUFFLE: int = 17
     NOT_EFFECT: int = 18
     NOT_DRAW_OPTIONS: int = 19
+    NOT_LOGIC_EVENTS: int = 20
 
 
 class ArgumentError(CaboError):
