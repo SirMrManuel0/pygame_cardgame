@@ -21,6 +21,12 @@ class PlayerDeck(Deck):
     def get_cards(self) -> list:
         return [*self._cards]
 
+    def get_card(self, card: int) -> Card:
+        return self._cards[card]
+
+    def get_index_range(self) -> tuple[int, int]:
+        return 0, len(self._cards) - 1
+
     def set_card(self, cid: int, card: Card) -> None:
         self._cards[cid] = card
 
