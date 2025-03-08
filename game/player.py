@@ -7,7 +7,7 @@ class Player:
         assertion.assert_type(game_deck, GameDeck, ArgumentError, code=ArgumentCodes.NOT_GAME_DECK)
         assertion.assert_types(cards, Types.INT.value, ArgumentError, code=ArgumentCodes.NOT_INT)
         assertion.assert_types(pid, Types.INT.value, ArgumentError, code=ArgumentCodes.NOT_INT)
-        assertion.assert_above(cards, 3, ArgumentError, code=ArgumentCodes.TOO_SMALL)
+        assertion.assert_above(cards, 0, ArgumentError, code=ArgumentCodes.TOO_SMALL)
         assertion.assert_above(pid, -1, ArgumentError, code=ArgumentCodes.TOO_SMALL)
         t: list = [game_deck.draw() for i in range(cards)]
         self._hidden_cards: PlayerDeck = PlayerDeck(t)

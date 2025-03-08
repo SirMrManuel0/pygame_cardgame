@@ -44,6 +44,9 @@ class ArgumentCodes(Enum):
     NOT_CARD: int = 14
     NOT_GAME_DECK: int = 15
     TOO_SMALL: int = 16
+    NOT_SHUFFLE: int = 17
+    NOT_EFFECT: int = 18
+    NOT_DRAW_OPTIONS: int = 19
 
 
 class ArgumentError(CaboError):
