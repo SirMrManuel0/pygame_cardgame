@@ -47,7 +47,7 @@ def get_path_resource(*way) -> str:
                           msg=f"There is no given path for this request in 'resources.json'")
     return get_path_abs("../resources" + "/" + str(sub_path))
 
-def rnd(x: float) -> float:
+def rnd(x) -> float:
     return float(np.round(x, 8))
 
 def run() -> None:

@@ -1,5 +1,13 @@
 from enum import Enum
 
+class Types(Enum):
+    INT: tuple = (int,)
+    FLOAT: tuple = (float,)
+    NUMBER: tuple = (*INT, *FLOAT)
+    LIST: tuple = (list,)
+    TUPLE: tuple = (tuple,)
+    LISTS: tuple = (*LIST, )
+
 class CaboCodes(Enum):
     NONE: int = 0
 
@@ -33,6 +41,15 @@ class ArgumentCodes(Enum):
     LIST_NOT_STRING: int = 11
     MISSING_RESSOURCE_ENTRY: int = 12
     NOT_STRING: int = 13
+    NOT_CARD: int = 14
+    NOT_GAME_DECK: int = 15
+    TOO_SMALL: int = 16
+    NOT_SHUFFLE: int = 17
+    NOT_EFFECT: int = 18
+    NOT_DRAW_OPTIONS: int = 19
+    NOT_LOGIC_EVENTS: int = 20
+    NOT_LIST: int = 21
+    NOT_DISCARD_PILE: int = 22
 
 
 class ArgumentError(CaboError):
