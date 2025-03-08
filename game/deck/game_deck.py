@@ -11,6 +11,7 @@ class GameDeck(gd.Deck):
         return self._cards.pop(0)
 
     def shuffle(self, kind: gd.Shuffle = gd.Shuffle.DUMP) -> None:
+        assertion.assert_type(kind, gd.Shuffle, ArgumentError, code=ArgumentCodes.NOT_SHUFFLE)
         if kind == gd.Shuffle.NONE: return None
         shuffle_kinds: dict = {
             gd.Shuffle.DUMP: self._shuffle_0
@@ -24,6 +25,8 @@ class GameDeck(gd.Deck):
         return len(self._cards)
 
     def update(self, pile, shuffle: gd.Shuffle = gd.Shuffle.DUMP) -> None:
+        assertion.assert_type(shuffle, gd.Shuffle, ArgumentError, code=ArgumentCodes.NOT_SHUFFLE)
+        assertion.assert_type(pile, gd.DiscardPile, ArgumentError, code=ArgumentCodes.NOT_DISCARD_PILE)
         pile_list: list = pile.get_all()
         pile.set([pile_list.pop(0)])
         self._cards += pile_list

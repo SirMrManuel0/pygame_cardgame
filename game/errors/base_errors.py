@@ -49,6 +49,7 @@ class ArgumentCodes(Enum):
     NOT_DRAW_OPTIONS: int = 19
     NOT_LOGIC_EVENTS: int = 20
     NOT_LIST: int = 21
+    NOT_DISCARD_PILE: int = 22
 
 
 class ArgumentError(CaboError):
