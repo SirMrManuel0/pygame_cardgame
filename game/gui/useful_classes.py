@@ -1,4 +1,4 @@
-PHI: float = 1.618033988749895
+from game.gui.globals import PHI
 
 
 class Dimension:

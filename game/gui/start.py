@@ -3,22 +3,18 @@ import pygame
 import game.gui
 from game.logic import CaboLogic
 import game.gui as gui
+from game.gui import globals
+
 
 class GuiHandler:
     def __init__(self, instant_run: bool = True, sizes=None) -> None:
         pygame.init()
-        self._base_dimension = gui.Dimension((700 * game.gui.PHI, 700))
+        self._base_dimension = gui.Dimension(globals.SIZE)
 
-        self._current_window = None
+        self._window = gui.Window(self._base_dimension, "Cabo")
 
         if instant_run:
             self.run()
 
     def run(self) -> None:
-        home_window = self.create_home_window()
-        home_window.run()
-
-    def create_home_window(self):
-        home_window = gui.Window(self._base_dimension, "Cabo")
-        pygame.draw.rect(home_window.get_screen(), (255, 0, 0), (350, 250, 100, 100))
-        return home_window
+        self._window.run()
