@@ -7,7 +7,6 @@ from game.gui import globals
 class Text(BaseObject):
     def __init__(self, position, color, text, fontSize):
         super().__init__(position, color)
-        print(fontSize)
         self._font = pygame.font.SysFont('freesanbold.ttf', fontSize)
         self._text = self._font.render(text, True, color.get_data())
         self._textRect = self._text.get_rect()

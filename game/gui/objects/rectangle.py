@@ -6,7 +6,6 @@ import pygame
 class Rectangle(BaseObject):
     def __init__(self, position, width, height, color):
         super().__init__(position, color)
-        print(width)
         self._size = Vector([width, height])
 
     def draw(self, surface):
