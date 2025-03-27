@@ -1,0 +1,2 @@
+PHI: float = 1.618033988749895
+SIZE: tuple = (700 * PHI, 700)

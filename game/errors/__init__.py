@@ -1,5 +1,5 @@
 from game.errors.base_errors import *
-import assertion
+from game.errors import assertion
 
 __all__ = [
     "StateError",
