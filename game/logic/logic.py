@@ -1,7 +1,7 @@
 # from game import get_path_abs, get_path_resource
 from enum import Enum
 
-from .player import Player
+from game.player import Player
 from game.errors import *
 from game.deck import GameDeck, DiscardPile, Card, Shuffle
 from game.event_handler import LogicEvents, LogicEventHandler
