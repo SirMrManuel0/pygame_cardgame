@@ -26,6 +26,10 @@ class Player:
     def get_pid(self) -> int:
         return self._pid
 
+    def set_pid(self, new_id: int) -> None:
+        assertion.assert_type(new_id, int, ArgumentError, code=ArgumentCodes.NOT_INT)
+        self._pid = new_id
+
     def set_active_card(self, card: Card) -> None:
         assertion.assert_type(card, Card, ArgumentError, code=ArgumentCodes.NOT_CARD)
         self._active_card = card

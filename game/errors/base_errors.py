@@ -50,6 +50,9 @@ class ArgumentCodes(Enum):
     NOT_LOGIC_EVENTS: int = 20
     NOT_LIST: int = 21
     NOT_DISCARD_PILE: int = 22
+    NOT_ENEMY: int = 23
+    NOT_ENUM: int = 24
+    TOO_BIG: int = 25
 
 
 class ArgumentError(CaboError):
