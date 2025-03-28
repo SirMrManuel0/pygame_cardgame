@@ -33,9 +33,9 @@ class BaseEnemy(Player):
         self._player_count = player_count
         self._nn = None
         self._cards = cards
-        # Phasen: 1. Karte ziehen | 2. Karte auf den Abglegestapel oder mit hidden Card Wechseln.
+        # Phasen: 1. Karte ziehen oder cabo | 2. Karte auf den Abglegestapel oder mit hidden Card Wechseln.
         # 3. peek effekt | 4. spy effekt | 5. swap effekt
-        self._actions_per_phase = [2, 1 + self._cards, self._cards, player_count * self._cards,
+        self._actions_per_phase = [3, 1 + self._cards, self._cards, player_count * self._cards,
                                    (self._cards ** 2) * player_count]
         # other player hidden cards + self hidden cards + discard pile + hand card + phases
         self._input_dim = self._player_count * self._cards + 4 + 1 + 1 + 3
@@ -93,40 +93,42 @@ class BaseEnemy(Player):
         ])
         return Vector(self._nn.forward(x, state["phase"].value).tolist())
 
-    def phase_1(self, state) -> DrawOptions:
+    def phase_1(self, state) -> tuple[float, DrawOptions]:
         self.update_memory_self()
         self.update_memory_enemies()
         output: Vector = self._nn_call(state)
         choice_ = output.rand_choice(self._heat)
         # 0 -> Deck | 1 -> Disposal Pile
         if choice_ == 0:
-            return DrawOptions.GAME_DECK
+            return float(output[choice_]), DrawOptions.GAME_DECK
+        elif choice_ == 1:
+            return float(output[choice_]), DrawOptions.DISCARD_PILE
         else:
-            return DrawOptions.DISCARD_PILE
+            return float(output[choice_]), DrawOptions.CABO
 
-    def phase_2(self, state) -> int:
+    def phase_2(self, state) -> tuple[float, int]:
         output: Vector = self._nn_call(state)
         choice_ = output.rand_choice(self._heat)
         # 0 -> Disposal Pile | 1 - cards -> swap
         if choice_ > 0:
             self._memory_mask_self[choice_-1] = 1
-        return choice_
+        return float(output[choice_]), choice_
 
-    def phase_3(self, state) -> int:
+    def phase_3(self, state) -> tuple[float, int]:
         output: Vector = self._nn_call(state)
         choice_ = output.rand_choice(self._heat)
         self._memory_mask_self[choice_] = 1
-        return choice_
+        return float(output[choice_]), choice_
 
-    def phase_4(self, state) -> tuple[int, int]:
+    def phase_4(self, state) -> tuple[float, int, int]:
         output: Vector = self._nn_call(state)
         choice_ = output.rand_choice(self._heat)
         player: int = int(choice_ / self._cards)
         card: int = choice_ - player * self._cards
         self._memory_mask_enemies[player][card] = 1
-        return player, card
+        return float(output[choice_]), player, card
 
-    def phase_5(self, state) -> tuple[int, int, int]:
+    def phase_5(self, state) -> tuple[float, int, int, int]:
         output: Vector = self._nn_call(state)
         choice_ = output.rand_choice(self._heat)
         enemy: int = int(choice_ / (self._cards ** 2))
@@ -144,7 +146,7 @@ class BaseEnemy(Player):
         if not knows_own_card:
             self._memory_mask_enemies[enemy][enemy_card] = 0
 
-        return self_card, enemy, enemy_card
+        return float(output[choice_]), self_card, enemy, enemy_card
 
     def change_mask_self(self, position: int, unmasked: bool):
         self._memory_mask_self[position] = int(unmasked)
@@ -166,6 +168,9 @@ class BaseEnemy(Player):
         with open(get_path_resource(*self._path), "r", encoding="utf-8") as f:
             if len(f.read()) > 0:
                 self.load()
+
+    def get_self_mask(self) -> Vector:
+        return self._memory_mask_self
 
     def __del__(self):
         if len(self._path) > 1:

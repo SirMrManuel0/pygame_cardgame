@@ -11,6 +11,7 @@ from game.deck.base import Effect
 class DrawOptions(Enum):
     DISCARD_PILE: int = 0
     GAME_DECK: int = 1
+    CABO: int = 2
 
 
 class CaboLogic:
@@ -23,7 +24,7 @@ class CaboLogic:
         self._discard_pile: DiscardPile = DiscardPile()
         self._players: list = [Player(self._game_deck, cards=start_card_count, pid=i) for i in range(player_count)]
         self._player_count: int = player_count
-        self._event_handler: LogicEventHandler = LogicEventHandler()
+        self.event_handler: LogicEventHandler = LogicEventHandler()
 
     def get_game_deck(self) -> GameDeck:
         return self._game_deck
@@ -48,13 +49,13 @@ class CaboLogic:
         return self._players[pid].get_hidden_card(card)
 
     def get_events(self) -> list:
-        return self._event_handler.get_events()
+        return self.event_handler.get_events()
 
     def remove_event(self, eid: int) -> None:
-        self._event_handler.remove_event(eid)
+        self.event_handler.remove_event(eid)
 
     def clear_events(self) -> None:
-        self._event_handler.clear_events()
+        self.event_handler.clear_events()
 
     def draw(self, player_id: int, deck: DrawOptions = DrawOptions.GAME_DECK) -> None:
         assertion.assert_types(player_id, Types.INT.value, ArgumentError, code=ArgumentCodes.NOT_INT)
@@ -97,7 +98,7 @@ class CaboLogic:
             Effect.SPY: LogicEvents.SPY_EFFECT,
             Effect.SWAP: LogicEvents.SWAP_EFFECT
         }
-        self._event_handler.add_event(ef_dict[effect], player_id)
+        self.event_handler.add_event(ef_dict[effect], player_id)
 
     def _swap_effect(self, player_id: int, enemy_id: int, swap_card_player: int, swap_card_enemy: int) -> None:
         assertion.assert_types(player_id, Types.INT.value, ArgumentError, code=ArgumentCodes.NOT_INT)
@@ -129,7 +130,7 @@ class CaboLogic:
 
     def check_empty_deck(self) -> bool:
         if self._game_deck.length() <= 0:
-            self._event_handler.add_event(LogicEvents.EMPTY_DECK)
+            self.event_handler.add_event(LogicEvents.EMPTY_DECK)
             return True
         return False
 
@@ -155,3 +156,10 @@ class CaboLogic:
     def get_score_board(self) -> list:
         return sorted(self._players, key=lambda player:player.get_score())
 
+    def cabo(self, pid: int) -> None:
+        assertion.assert_types(pid, Types.INT.value, ArgumentError, code=ArgumentCodes.NOT_INT)
+
+        self.event_handler.add_event(LogicEvents.CABO, pid)
+
+    def __iter__(self):
+        return self._players

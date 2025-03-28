@@ -22,6 +22,12 @@
         "white": "icons/white.png"
     },
     "ai": {
+        "training_logs": {
+            "Easy": "ai/training_logs/Easy.log",
+            "Medium": "ai/training_logs/Medium.log",
+            "Hard": "ai/training_logs/Hard.log",
+            "Impossible": "ai/training_logs/Impossible.log"
+        },
         "easy_nn": "ai/easy_nn.pth"
     }
 }

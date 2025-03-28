@@ -1,3 +1,5 @@
+import random
+
 import game.deck as gd
 from game.errors import *
 
@@ -6,6 +8,7 @@ class GameDeck(gd.Deck):
         super().__init__()
         self._cards: list = [gd.Card(0), gd.Card(0), gd.Card(13), gd.Card(13)]
         self._cards += [gd.Card(i) for b in range(4) for i in range(1, 13)]
+        self._shuffle(gd.Shuffle.DUMP)
 
     def draw(self) -> gd.Card:
         return self._cards.pop(0)
@@ -19,7 +22,10 @@ class GameDeck(gd.Deck):
         shuffle_kinds.get(kind, shuffle_kinds[gd.Shuffle.DUMP])()
 
     def _shuffle_0(self) -> None:
-        ...
+        self._cards = random.sample(self._cards, len(self._cards))
+        self._cards = random.sample(self._cards, len(self._cards))
+        self._cards = random.sample(self._cards, len(self._cards))
+        self._cards = random.sample(self._cards, len(self._cards))
 
     def length(self) -> int:
         return len(self._cards)

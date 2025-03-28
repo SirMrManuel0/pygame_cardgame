@@ -1,10 +1,14 @@
 import random
 
+from useful_utility.algebra import Vector
+
 from game import Player
 from game.enemies import BaseEnemy, create_enemy, Difficulties
 from game.enemies.base_enemy import State, Phase
 from game.errors import assertion, ArgumentCodes, ArgumentError
+from game.event_handler import LogicEvents
 from game.logic import CaboLogic
+from game.logic.logic import DrawOptions
 
 
 class LogicWAI(CaboLogic):
@@ -35,31 +39,48 @@ class LogicWAI(CaboLogic):
             cards.append(player.get_hidden_cards())
         return cards
 
-    def ai_phase1(self, pid: int) -> None:
-        deck_choice = self._players[pid].phase1(State(self._ai_prep_cards(pid),
+    def ai_phase1(self, pid: int) -> tuple[float, DrawOptions]:
+        prob, deck_choice = self._players[pid].phase1(State(self._ai_prep_cards(pid),
                                                       self._discard_pile.peek(), Phase.a1_DRAW_CARD))
+        if deck_choice == DrawOptions.CABO:
+            self.cabo(pid)
+            return prob
         self.draw(pid, deck_choice)
+        return prob, deck_choice
 
-    def ai_phase2(self, pid: int) -> None:
-        put_down_choice = self._players[pid].phase2(State(self._ai_prep_cards(pid),
+    def ai_phase2(self, pid: int) -> tuple[float, int, int, int, Vector]:
+        prob, put_down_choice = self._players[pid].phase2(State(self._ai_prep_cards(pid),
                                                           self._discard_pile.peek(), Phase.a2_PUT_CARD_DOWN))
+        active_card: int = self._players[pid].get_active_card().get_value()
         if put_down_choice > 0:
             self.swap_self(pid, put_down_choice - 1)
+        swapped_card: int = self._players[pid].get_active_card().get_value()
         self.discard(pid)
+        mask = self._players[pid].get_self_mask()
         self._players[pid].update_memory_self()
+        return prob, active_card, swapped_card, put_down_choice, mask
 
-    def ai_phase3(self, pid: int) -> None:
-        peek_choice = self._players[pid].phase3(State(self._ai_prep_cards(pid),
+    def ai_phase3(self, pid: int) -> float:
+        prob, peek_choice = self._players[pid].phase3(State(self._ai_prep_cards(pid),
                                                       self._discard_pile.peek(), Phase.a3_PEEK_EFFECT))
         self._peek_effect(pid, peek_choice)
         self._players[pid].update_memory_self()
+        return prob
 
-    def ai_phase4(self, pid: int) -> None:
-        player, card = self._players[pid].phase4(State(self._ai_prep_cards(pid),
+    def ai_phase4(self, pid: int) -> float:
+        prob, player, card = self._players[pid].phase4(State(self._ai_prep_cards(pid),
                                                        self._discard_pile.peek(), Phase.a4_SPY_EFFECT))
         self._spy_effect(player, card)
+        return prob
 
-    def ai_phase5(self, pid: int) -> None:
-        player_card, enemy, enemy_card = self._players[pid].phase5(State(self._ai_prep_cards(pid),
+    def ai_phase5(self, pid: int) -> float:
+        prob, player_card, enemy, enemy_card = self._players[pid].phase5(State(self._ai_prep_cards(pid),
                                                                          self._discard_pile.peek(), Phase.a5_SWAP_EFFECT))
         self._swap_effect(pid, enemy, player_card, enemy_card)
+        self.event_handler.add_event(LogicEvents.SWAP_EFFECT, {
+            "from": pid,
+            "to": enemy,
+            "from_card": player_card,
+            "to_card": enemy_card
+        })
+        return prob

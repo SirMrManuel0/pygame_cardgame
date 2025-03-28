@@ -7,6 +7,7 @@ class LogicEvents(Enum):
     PEEK_EFFECT: int = 1
     SPY_EFFECT: int = 2
     SWAP_EFFECT: int = 3
+    CABO: int = 4
 
 
 class LogicEvent:
@@ -72,7 +73,7 @@ class LogicEventHandler:
         return any([event.get_kind() == kind for event in self._events])
 
     def __iter__(self):
-        return self
+        return self._events
 
     def __next__(self):
         if len(self._events) > 0:

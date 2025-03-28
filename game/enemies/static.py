@@ -8,3 +8,6 @@ def create_enemy(difficulty: Difficulties, player_count: int, game_deck: GameDec
     if difficulty == Difficulties.EASY:
         return EasyEnemy(player_count, game_deck, cards, pid)
 
+
+def train():
+    ...
