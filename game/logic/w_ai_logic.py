@@ -3,7 +3,7 @@ import random
 from useful_utility.algebra import Vector
 
 from game import Player
-from game.enemies import BaseEnemy, create_enemy, Difficulties
+from game.enemies import BaseEnemy, create_enemy, Difficulties, PolicyNN
 from game.enemies.base_enemy import State, Phase
 from game.errors import assertion, ArgumentCodes, ArgumentError
 from game.event_handler import LogicEvents
@@ -78,3 +78,8 @@ class LogicWAI(CaboLogic):
                                                                          self._discard_pile.peek(), Phase.a5_SWAP_EFFECT))
         self._swap_effect(pid, enemy, player_card, enemy_card)
         return prob, player_card, enemy, enemy_card
+
+    def set_ai_all(self, ai: PolicyNN) -> None:
+        for player in self._players:
+            if isinstance(player, BaseEnemy):
+                player.set_nn(ai)

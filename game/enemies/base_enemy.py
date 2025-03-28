@@ -181,6 +181,18 @@ class BaseEnemy(Player):
     def get_cards_self(self) -> Vector:
         return self._vec_cards
 
+    def get_params(self):
+        return self._nn.parameters()
+
+    def set_nn(self, nn: PolicyNN):
+        self._nn = nn
+
+    def get_input_dim(self) -> int:
+        return self._input_dim
+
+    def get_actions_per_phase(self) -> list:
+        return self._actions_per_phase
+
     def __del__(self):
         if len(self._path) > 1:
             self.save()
