@@ -1,0 +1,85 @@
+2025-03-29 00:17:22,995 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:17:22,995 - INFO - Round 1 / 20 started
+2025-03-29 00:18:26,432 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:18:26,433 - INFO - Round 1 / 20 started
+2025-03-29 00:18:26,433 - INFO - It is 0 / 4 turn.
+2025-03-29 00:19:52,700 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:19:52,700 - INFO - Round 1 / 20 started
+2025-03-29 00:19:52,700 - INFO - It is 0 / 4 turn.
+2025-03-29 00:22:22,945 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:22:22,946 - INFO - Round 1 / 20 started
+2025-03-29 00:22:22,946 - INFO - It is 0 / 4 turn.
+2025-03-29 00:23:32,305 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:23:32,305 - INFO - Round 1 / 20 started
+2025-03-29 00:23:32,305 - INFO - It is 0 / 4 turn.
+2025-03-29 00:24:00,358 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:24:00,358 - INFO - Round 1 / 20 started
+2025-03-29 00:24:00,358 - INFO - It is 0 / 4 turn.
+2025-03-29 00:26:42,655 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:26:42,656 - INFO - Round 1 / 20 started
+2025-03-29 00:26:42,656 - INFO - It is 0 / 4 turn.
+2025-03-29 00:29:48,144 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:29:48,144 - INFO - Round 1 / 20 started
+2025-03-29 00:29:48,144 - INFO - It is 0 / 4 turn.
+2025-03-29 00:40:57,083 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:40:57,083 - INFO - Round 1 / 20 started
+2025-03-29 00:40:57,083 - INFO - It is 0 / 4 turn.
+2025-03-29 00:41:26,548 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:41:26,548 - INFO - Round 1 / 20 started
+2025-03-29 00:41:26,548 - INFO - It is 0 / 4 turn.
+2025-03-29 00:42:31,924 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:42:31,924 - INFO - Round 1 / 20 started
+2025-03-29 00:42:31,925 - INFO - It is 0 / 4 turn.
+2025-03-29 00:42:31,928 - INFO - Card has been drawn with val: 11 from DrawOptions.GAME_DECK. Discard Pile: -1 | probs: 0.322994202375412 | reward: -1
+2025-03-29 00:43:32,538 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:43:32,538 - INFO - Round 1 / 20 started
+2025-03-29 00:43:32,538 - INFO - It is 0 / 4 turn.
+2025-03-29 00:43:46,316 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:43:46,316 - INFO - Round 1 / 20 started
+2025-03-29 00:43:46,316 - INFO - It is 0 / 4 turn.
+2025-03-29 00:44:36,593 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:44:36,593 - INFO - Round 1 / 20 started
+2025-03-29 00:44:36,593 - INFO - It is 0 / 4 turn.
+2025-03-29 00:44:36,597 - INFO - Card has been drawn with val: 8 from DrawOptions.GAME_DECK. Discard Pile: -1 | probs: 0.33848971128463745 | reward: -1
+2025-03-29 00:44:36,599 - INFO - Card has been put onto the disposal pile. prob: 0.22071343660354614 | reward: 1
+2025-03-29 00:45:45,079 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:45:45,079 - INFO - Round 1 / 20 started
+2025-03-29 00:45:45,079 - INFO - It is 0 / 4 turn.
+2025-03-29 00:46:24,673 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:46:24,673 - INFO - Round 1 / 20 started
+2025-03-29 00:46:24,673 - INFO - It is 0 / 4 turn.
+2025-03-29 00:46:49,013 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:46:49,013 - INFO - Round 1 / 20 started
+2025-03-29 00:46:49,013 - INFO - It is 0 / 4 turn.
+2025-03-29 00:46:49,017 - INFO - Card has been drawn with val: -1 from DrawOptions.DISCARD_PILE. Discard Pile: -1 | probs: 0.31499016284942627 | reward: 1
+2025-03-29 00:48:09,245 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:48:09,245 - INFO - Round 1 / 20 started
+2025-03-29 00:48:09,245 - INFO - It is 0 / 4 turn.
+2025-03-29 00:48:09,249 - INFO - Card has been drawn with val: 9 from DrawOptions.GAME_DECK. Discard Pile: -1 | probs: 0.3382377028465271 | reward: -1
+2025-03-29 00:48:09,251 - INFO - Card has been put onto the disposal pile. prob: 0.20888255536556244 | reward: -1
+2025-03-29 00:49:05,035 - INFO - Logic has been initialised with: difficulty: Easy | cards: 4 | player: 4
+2025-03-29 00:49:05,035 - INFO - Round 1 / 20 started
+2025-03-29 00:49:05,035 - INFO - It is 0 / 4 turn.
+2025-03-29 00:49:05,039 - INFO - Card has been drawn with val: 3 from DrawOptions.GAME_DECK. Discard Pile: -1 | probs: 0.3284429609775543 | reward: -1
+2025-03-29 00:49:05,041 - INFO - Card has been put onto the disposal pile. prob: 0.197631374001503 | reward: 1
+2025-03-29 00:49:05,041 - INFO - It is 1 / 4 turn.
+2025-03-29 00:49:05,043 - INFO - Card has been drawn with val: 7 from DrawOptions.GAME_DECK. Discard Pile: 6 | probs: 0.32351386547088623 | reward: 0
+2025-03-29 00:49:05,045 - INFO - Card has been put onto the disposal pile. prob: 0.23475874960422516 | reward: 1
+2025-03-29 00:49:05,047 - INFO - EVENT: Swap effect used by 1. prob: 0.02049984224140644 | reward: 0
+2025-03-29 00:49:05,047 - INFO - 1 / 4 turn is over.
+2025-03-29 00:49:05,047 - INFO - It is 2 / 4 turn.
+2025-03-29 00:49:05,049 - INFO - Card has been drawn with val: 11 from DrawOptions.GAME_DECK. Discard Pile: 12 | probs: 0.3160458505153656 | reward: -1
+2025-03-29 00:49:05,052 - INFO - Card has been put onto the disposal pile. prob: 0.19366540014743805 | reward: -1
+2025-03-29 00:49:05,054 - INFO - EVENT: Spy effect used by 2. prob: 0.19366540014743805 | reward: 1
+2025-03-29 00:49:05,054 - INFO - 2 / 4 turn is over.
+2025-03-29 00:49:05,055 - INFO - It is 3 / 4 turn.
+2025-03-29 00:49:05,058 - INFO - Card has been drawn with val: -1 from DrawOptions.CABO. Discard Pile: 9 | probs: 0.3355863690376282 | reward: -1
+2025-03-29 00:49:05,058 - INFO - EVENT: Cabo has been called by 3.
+2025-03-29 00:49:05,061 - INFO - Card has been put onto the disposal pile. prob: 0.19096015393733978 | reward: 1
+2025-03-29 00:49:05,061 - INFO - The last round begins.
+2025-03-29 00:49:05,061 - INFO - It is 0 / 4 turn.
+2025-03-29 00:49:05,063 - INFO - Card has been drawn with val: -1 from DrawOptions.CABO. Discard Pile: 0 | probs: 0.3170589804649353 | reward: 1
+2025-03-29 00:49:05,064 - INFO - EVENT: Cabo has been called by 0.
+2025-03-29 00:49:05,065 - INFO - Card has been put onto the disposal pile. prob: 0.1918402910232544 | reward: -1
+2025-03-29 00:49:05,065 - INFO - It is 1 / 4 turn.
+2025-03-29 00:49:05,067 - INFO - Card has been drawn with val: -1 from DrawOptions.DISCARD_PILE. Discard Pile: 0 | probs: 0.3574492335319519 | reward: 1

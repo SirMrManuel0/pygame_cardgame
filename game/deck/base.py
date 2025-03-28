@@ -21,7 +21,7 @@ class Deck:
 class Card:
     def __init__(self, value: int = 0):
         assertion.assert_types(value, Types.INT.value, ArgumentError, code=ArgumentCodes.NOT_INT)
-        assertion.assert_range(value, 0, 13, ArgumentError, code=ArgumentCodes.OUT_OF_RANGE)
+        assertion.assert_range(value, -1, 13, ArgumentError, code=ArgumentCodes.OUT_OF_RANGE)
         self._value = value
 
     def get_value(self):

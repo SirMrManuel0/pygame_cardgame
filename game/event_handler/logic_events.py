@@ -44,7 +44,7 @@ class LogicEventHandler:
 
     def remove_event(self, event_id: int) -> None:
         assertion.assert_types(event_id, Types.INT.value, ArgumentError, code=ArgumentCodes.NOT_INT)
-        assertion.assert_above(event_id, self._ids - 1, ArgumentError, code=ArgumentCodes.TOO_SMALL)
+        assertion.assert_below(event_id, self._ids, ArgumentError, code=ArgumentCodes.TOO_BIG)
         c = list()
         for event in self._events:
             if event.get_eid() == event_id:

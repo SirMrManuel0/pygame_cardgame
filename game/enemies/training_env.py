@@ -5,7 +5,8 @@ from useful_utility.algebra import Vector, Matrix
 
 from game import get_path_resource, Player
 from game.deck import Shuffle
-from game.enemies import Difficulties, BaseEnemy, PolicyNN
+from game.enemies.base_enemy import Difficulties, BaseEnemy
+from game.enemies.policy_nn import PolicyNN
 from game.event_handler import *
 from game.logic.logic import DrawOptions
 from game.logic.w_ai_logic import LogicWAI
@@ -56,6 +57,15 @@ class TrainingEnv:
         self._winner = self._winner[0]
         logging.info(f"{self._winner.get_pid()} has been determined as the winner.")
 
+    def get_nn(self) -> PolicyNN:
+        return self._winner.get_nn()
+
+    def get_rewards(self) -> list:
+        return self._rewards
+
+    def get_probs(self) -> list:
+        return self._probs
+
     def round(self):
         for player in self._logic:
             pid: int = player.get_pid()
@@ -70,8 +80,8 @@ class TrainingEnv:
                 self._logic.restock_deck(Shuffle.DUMP)
                 logging.info(f"EVENT: The deck has been shuffled.")
 
-            probs, data = self._logic.ai_phase1(pid)
-            self._probs.append(probs)
+            probs, data, action_probs = self._logic.ai_phase1(pid)
+            self._probs.append((probs, action_probs))
 
             card_val: int = player.get_active_card().get_value()
 
@@ -118,9 +128,9 @@ class TrainingEnv:
                 self._last = pid
                 logging.info(f"EVENT: Cabo has been called by {pid}.")
 
-            prob, active_card, swapped_card, put_down_choice, mask = self._logic.ai_phase2(pid)
+            prob, active_card, swapped_card, put_down_choice, mask, action_probs = self._logic.ai_phase2(pid)
 
-            self._probs.append(prob)
+            self._probs.append((prob, action_probs))
             hidden: Vector = Vector([card.get_value() for card in player.get_hidden_cards()])
             hidden = hidden.where(mask)
 
@@ -191,8 +201,8 @@ class TrainingEnv:
                     cards_enemy_before: Matrix = player.get_enemy_cards().copy()
                     cards_self_before: Vector = player.get_cards_self().copy()
 
-                    prob, self_card, enemy, enemy_card = self._logic.ai_phase5(pid)
-                    self._probs.append(prob)
+                    prob, self_card, enemy, enemy_card, action_probs = self._logic.ai_phase5(pid)
+                    self._probs.append((prob, action_probs))
 
                     mask_after: Matrix = player.get_enemy_mask()
                     mask_self_after: Vector = player.get_self_mask()

@@ -1,3 +1,4 @@
+import os
 import random
 from random import choice
 
@@ -8,7 +9,7 @@ from useful_utility.algebra import Matrix, Vector
 
 from game import Player, get_path_resource
 from game.deck import GameDeck, Card
-from game.enemies import PolicyNN
+from game.enemies.policy_nn import PolicyNN
 from game.logic.logic import DrawOptions
 
 
@@ -26,7 +27,7 @@ class Phase(Enum):
     a5_SWAP_EFFECT: int = 4
 
 class BaseEnemy(Player):
-    def __init__(self, player_count: int, game_deck: GameDeck,
+    def __init__(self, history: int, player_count: int, game_deck: GameDeck,
                  cards: int = 4, eid: int = 0) -> None:
         super().__init__(game_deck, cards, eid)
         self._path: tuple = ("",)
@@ -38,10 +39,11 @@ class BaseEnemy(Player):
         self._actions_per_phase = [3, 1 + self._cards, self._cards, player_count * self._cards,
                                    (self._cards ** 2) * player_count]
         # other player hidden cards + self hidden cards + discard pile + hand card + phases
-        self._input_dim = self._player_count * self._cards + 4 + 1 + 1 + 3
-        self._history: int = 1
+        self._input_dim = (self._player_count * self._cards + 4 + 1 + 1 + 5) * history
+        self._history: int = history
         self._alpha: float = .5
         self._heat: float = 0
+        self._last_requests: list = list()
         self._vec_cards: Vector = Vector([card.get_value() for card in self._hidden_cards.get_cards()])
         self._memory_mask_self: Vector = Vector(dimension=cards)
         self._memory_self: Vector = Vector(dimension=cards)
@@ -86,50 +88,59 @@ class BaseEnemy(Player):
             active_card = self._active_card.get_value()
         x = torch.cat([
             phase_one_hot,
-            torch.tensor(state.get_top_discard_card().get_value()),
-            torch.tensor(active_card),
+            torch.tensor([state.get_top_discard_card().get_value()]),
+            torch.tensor([active_card]),
             torch.tensor(self._memory_self.get_data()),
             torch.tensor(enemy_cards)
         ])
-        return Vector(self._nn.forward(x, state["phase"].value).tolist())
+        self._last_requests.append(x)
+        if len(self._last_requests) > self._history:
+            self._last_requests.pop(0)
+        if len(self._last_requests) > 0:
+            for y in self._last_requests:
+                x = torch.cat([x, y])
+        while len(x) < self._input_dim:
+            x = torch.cat([x, torch.tensor([0])])
+        list_, action_probs = self._nn.forward(x, state["phase"].value)
+        return Vector(list_), action_probs
 
-    def phase_1(self, state) -> tuple[float, DrawOptions]:
+    def phase_1(self, state) -> tuple[float, DrawOptions, torch.Tensor]:
         self.update_memory_self()
         self.update_memory_enemies()
-        output: Vector = self._nn_call(state)
+        output, action_probs = self._nn_call(state)
         choice_ = output.rand_choice(self._heat)
         # 0 -> Deck | 1 -> Disposal Pile
         if choice_ == 0:
-            return float(output[choice_]), DrawOptions.GAME_DECK
+            return float(output[choice_]), DrawOptions.GAME_DECK, action_probs
         elif choice_ == 1:
-            return float(output[choice_]), DrawOptions.DISCARD_PILE
+            return float(output[choice_]), DrawOptions.DISCARD_PILE, action_probs
         else:
-            return float(output[choice_]), DrawOptions.CABO
+            return float(output[choice_]), DrawOptions.CABO, action_probs
 
-    def phase_2(self, state) -> tuple[float, int]:
-        output: Vector = self._nn_call(state)
+    def phase_2(self, state) -> tuple[float, int, torch.Tensor]:
+        output, action_probs = self._nn_call(state)
         choice_ = output.rand_choice(self._heat)
         # 0 -> Disposal Pile | 1 - cards -> swap
         if choice_ > 0:
             self._memory_mask_self[choice_-1] = 1
-        return float(output[choice_]), choice_
+        return float(output[choice_]), choice_, action_probs
 
-    def phase_3(self, state) -> tuple[float, int]:
-        output: Vector = self._nn_call(state)
+    def phase_3(self, state) -> tuple[float, int, any]:
+        output, action_probs = self._nn_call(state)
         choice_ = output.rand_choice(self._heat)
         self._memory_mask_self[choice_] = 1
-        return float(output[choice_]), choice_
+        return float(output[choice_]), choice_, action_probs
 
-    def phase_4(self, state) -> tuple[float, int, int]:
-        output: Vector = self._nn_call(state)
+    def phase_4(self, state) -> tuple[float, int, int, torch.Tensor]:
+        output, action_probs = self._nn_call(state)
         choice_ = output.rand_choice(self._heat)
         player: int = int(choice_ / self._cards)
         card: int = choice_ - player * self._cards
         self._memory_mask_enemies[player][card] = 1
-        return float(output[choice_]), player, card
+        return float(output[choice_]), player, card, action_probs
 
-    def phase_5(self, state) -> tuple[float, int, int, int]:
-        output: Vector = self._nn_call(state)
+    def phase_5(self, state) -> tuple[float, int, int, int, torch.Tensor]:
+        output, action_probs = self._nn_call(state)
         choice_ = output.rand_choice(self._heat)
         enemy: int = int(choice_ / (self._cards ** 2))
         enemy_card: int = int((choice_ - (enemy * (self._cards ** 2))) / self._cards)
@@ -146,7 +157,7 @@ class BaseEnemy(Player):
         if not knows_own_card:
             self._memory_mask_enemies[enemy][enemy_card] = 0
 
-        return float(output[choice_]), self_card, enemy, enemy_card
+        return float(output[choice_]), self_card, enemy, enemy_card, action_probs
 
     def change_mask_self(self, position: int, unmasked: bool):
         self._memory_mask_self[position] = int(unmasked)
@@ -160,14 +171,13 @@ class BaseEnemy(Player):
         torch.save(self._nn.state_dict(), get_path_resource(*self._path))
 
     def load(self):
-        self._nn.load_state_dict(torch.load(get_path_resource(*self._path)))
-        self._nn.eval()
+        if os.path.exists(get_path_resource(*self._path)) and os.path.getsize(get_path_resource(*self._path)) > 0:
+            self._nn.load_state_dict(torch.load(get_path_resource(*self._path)))
+            self._nn.eval()
 
     def _set_path(self, path: tuple):
         self._path = path
-        with open(get_path_resource(*self._path), "r", encoding="utf-8") as f:
-            if len(f.read()) > 0:
-                self.load()
+        self.load()
 
     def get_self_mask(self) -> Vector:
         return self._memory_mask_self
@@ -186,6 +196,9 @@ class BaseEnemy(Player):
 
     def set_nn(self, nn: PolicyNN):
         self._nn = nn
+
+    def get_nn(self) -> PolicyNN:
+        return self._nn
 
     def get_input_dim(self) -> int:
         return self._input_dim

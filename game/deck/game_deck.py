@@ -8,7 +8,7 @@ class GameDeck(gd.Deck):
         super().__init__()
         self._cards: list = [gd.Card(0), gd.Card(0), gd.Card(13), gd.Card(13)]
         self._cards += [gd.Card(i) for b in range(4) for i in range(1, 13)]
-        self._shuffle(gd.Shuffle.DUMP)
+        self.shuffle(gd.Shuffle.DUMP)
 
     def draw(self) -> gd.Card:
         return self._cards.pop(0)

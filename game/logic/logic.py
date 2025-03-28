@@ -70,7 +70,7 @@ class CaboLogic:
         assertion.assert_types(player_id, Types.INT.value, ArgumentError, code=ArgumentCodes.NOT_INT)
         assertion.assert_is_positiv(player_id, ArgumentError, code=ArgumentCodes.NOT_POSITIV)
         card: Card = self._players[player_id].get_active_card()
-        self._players[player_id].set_active_card(None)
+        self._players[player_id].set_active_card(Card(-1))
         self._discard_pile.add(card)
         self._execute_effect(card.effect(), player_id)
 
@@ -93,6 +93,8 @@ class CaboLogic:
         assertion.assert_types(player_id, Types.INT.value, ArgumentError, code=ArgumentCodes.NOT_INT)
         assertion.assert_type(effect, Effect, ArgumentError, code=ArgumentCodes.NOT_EFFECT)
         assertion.assert_is_positiv(player_id, ArgumentError, code=ArgumentCodes.NOT_POSITIV)
+        if effect == Effect.NONE:
+            return
         ef_dict: dict = {
             Effect.PEEK: LogicEvents.PEEK_EFFECT,
             Effect.SPY: LogicEvents.SPY_EFFECT,
@@ -162,4 +164,4 @@ class CaboLogic:
         self.event_handler.add_event(LogicEvents.CABO, pid)
 
     def __iter__(self):
-        return self._players
+        return iter(self._players)
