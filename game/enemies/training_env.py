@@ -1,11 +1,11 @@
 import logging
 from datetime import datetime
 
-from useful_utility.algebra import Vector
+from useful_utility.algebra import Vector, Matrix
 
 from game import get_path_resource, Player
 from game.deck import Shuffle
-from game.enemies import Difficulties
+from game.enemies import Difficulties, BaseEnemy
 from game.event_handler import *
 from game.logic.logic import DrawOptions
 from game.logic.w_ai_logic import LogicWAI
@@ -50,8 +50,11 @@ class TrainingEnv:
         self.round()
         self._winner = self._logic.get_winner()
         logging.info(f"{self._winner} have won.")
-        winner: Player = self._winner[0]
-        logging.info(f"{winner.get_pid()} has been determined as the winner.")
+        self._winner: Player = self._winner[0]
+        logging.info(f"{self._winner.get_pid()} has been determined as the winner.")
+
+    def get_winner_probs_and_rewards(self) -> tuple[list, list]:
+        return self._probs[self._winner.get_pid()], self._rewards[self._winner.get_pid()]
 
     def round(self):
         for player in self._logic:
@@ -84,7 +87,7 @@ class TrainingEnv:
                     self._rewards[pid].append(1)
                 elif card_val < 4:
                     self._rewards[pid].append(1)
-                elif 4 < card_val < 7:
+                elif 3 < card_val < 7:
                     self._rewards[pid].append(.5)
 
             top_card_discard: int = self._logic.get_discard_pile().peek().get_value()
@@ -124,6 +127,7 @@ class TrainingEnv:
 
             self._probs[pid].append(prob)
             hidden: Vector = Vector([card.get_value() for card in player.get_hidden_cards()])
+            hidden = hidden.where(mask)
 
             if put_down_choice > 0:
                 if mask[put_down_choice-1] == 1:
@@ -141,30 +145,94 @@ class TrainingEnv:
             else:
                 if active_card > 10:
                     self._rewards[pid].append(1)
-                elif mask == [1] * self._cards:
-                    if active_card > hidden.max():
-                        self._rewards[pid].append(1)
-                    elif active_card < hidden.max():
-                        self._rewards[pid].append(-1)
-                        
-
+                elif active_card > hidden.max():
+                    self._rewards[pid].append(1)
+                elif -1 < active_card < hidden.max():
+                    self._rewards[pid].append(-1)
+                elif active_card == hidden.max():
+                    self._rewards[pid].append(0)
+                elif active_card < 4:
+                    self._rewards[pid].append(-1)
+                else:
+                    self._rewards[pid].append(0)
 
             logging.info(f"Card has been put onto the disposal pile. prob: {prob} | reward: {self._rewards[pid][-1]}")
+
             events: list = self._logic.get_events()
             if len(events) == 0:
                 continue
             for event in events:
                 assert isinstance(event, LogicEvent)
                 if event.get_kind() == LogicEvents.PEEK_EFFECT:
-                    self._probs.append(self._logic.ai_phase3(pid))
+                    mask_before: Vector = player.get_self_mask().copy()
+                    self._probs[pid].append(self._logic.ai_phase3(pid))
+                    mask_after: Vector = player.get_self_mask()
+                    if mask_before == mask_after:
+                        if mask_before == Vector([1] * self._cards):
+                            self._rewards[pid].append(0)
+                        else:
+                            self._rewards[pid].append(-1)
+                    else:
+                        self._rewards[pid].append(1)
                     self._logic.remove_event(event.get_eid())
-                    logging.info(f"EVENT: Peek effect used by {pid}.")
+                    logging.info(f"EVENT: Peek effect used by {pid}. prob: {prob} | reward: {self._rewards[pid][-1]}")
                 elif event.get_kind() == LogicEvents.SPY_EFFECT:
-                    self._probs.append(self._logic.ai_phase4(pid))
+                    assert isinstance(player, BaseEnemy)
+                    mask_before: Matrix = player.get_enemy_mask().copy()
+                    self._probs[pid].append(self._logic.ai_phase4(pid))
+                    mask_after: Matrix = player.get_enemy_mask()
+                    if mask_before == mask_after:
+                        if mask_before == Matrix(rows=self._players_count, columns=self._cards, default_value=1):
+                            self._rewards[pid].append(0)
+                        else:
+                            self._rewards[pid].append(-1)
+                    else:
+                        self._rewards[pid].append(1)
                     self._logic.remove_event(event.get_eid())
-                    logging.info(f"EVENT: Spy effect used by {pid}.")
+                    logging.info(f"EVENT: Spy effect used by {pid}. prob: {prob} | reward: {self._rewards[pid][-1]}")
                 elif event.get_kind() == LogicEvents.SWAP_EFFECT:
-                    self._probs.append(self._logic.ai_phase5(pid))
+                    mask_before: Matrix = player.get_enemy_mask().copy()
+                    mask_self_before: Vector = player.get_self_mask().copy()
+                    cards_enemy_before: Matrix = player.get_enemy_cards().copy()
+                    cards_self_before: Vector = player.get_cards_self().copy()
+
+                    prob, self_card, enemy, enemy_card = self._logic.ai_phase5(pid)
+                    self._probs[pid].append(prob)
+
+                    mask_after: Matrix = player.get_enemy_mask()
+                    mask_self_after: Vector = player.get_self_mask()
+                    cards_enemy_after: Matrix = player.get_enemy_cards()
+                    cards_self_after: Vector = player.get_cards_self()
+
+                    if mask_self_before[self_card] == mask_self_after[self_card] \
+                            and mask_before[enemy][enemy_card] == mask_after[enemy][enemy_card]:
+                        if mask_before[enemy][enemy_card] == 1 \
+                                and mask_self_before[self_card] == 1:
+                            if cards_self_before[self_card] > cards_enemy_before[enemy][enemy_card]:
+                                self._rewards[pid].append(1)
+                            elif cards_self_before[self_card] < cards_enemy_before[enemy][enemy_card]:
+                                self._rewards[pid].append(-1)
+                            else:
+                                self._rewards[pid].append(0)
+                        else:
+                            self._rewards[pid].append(0)
+                    elif mask_self_before[self_card] == 1:
+                        if cards_self_before[self_card] < 4:
+                            self._rewards[pid].append(-1)
+                        elif 3 < cards_self_before[self_card] < 8:
+                            self._rewards[pid].append(0)
+                        else:
+                            self._rewards[pid].append(1)
+                    elif mask_before[enemy][enemy_card] == 1:
+                        if cards_self_before[self_card] < 4:
+                            self._rewards[pid].append(1)
+                        elif 3 < cards_self_before[self_card] < 8:
+                            self._rewards[pid].append(0)
+                        else:
+                            self._rewards[pid].append(-1)
+                    else:
+                        self._rewards[pid].append(0)
+
                     self._logic.remove_event(event.get_eid())
-                    logging.info(f"EVENT: Swap effect used by {pid}.")
+                    logging.info(f"EVENT: Swap effect used by {pid}. prob: {prob} | reward: {self._rewards[pid][-1]}")
             logging.info(f"{pid} / {self._players_count} turn is over.")

@@ -172,6 +172,15 @@ class BaseEnemy(Player):
     def get_self_mask(self) -> Vector:
         return self._memory_mask_self
 
+    def get_enemy_mask(self) -> Matrix:
+        return self._memory_mask_enemies
+
+    def get_enemy_cards(self) -> Matrix:
+        return self._cards_enemies
+
+    def get_cards_self(self) -> Vector:
+        return self._vec_cards
+
     def __del__(self):
         if len(self._path) > 1:
             self.save()

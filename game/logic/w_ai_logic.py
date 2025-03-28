@@ -73,14 +73,8 @@ class LogicWAI(CaboLogic):
         self._spy_effect(player, card)
         return prob
 
-    def ai_phase5(self, pid: int) -> float:
+    def ai_phase5(self, pid: int) -> tuple[float, int, int, int]:
         prob, player_card, enemy, enemy_card = self._players[pid].phase5(State(self._ai_prep_cards(pid),
                                                                          self._discard_pile.peek(), Phase.a5_SWAP_EFFECT))
         self._swap_effect(pid, enemy, player_card, enemy_card)
-        self.event_handler.add_event(LogicEvents.SWAP_EFFECT, {
-            "from": pid,
-            "to": enemy,
-            "from_card": player_card,
-            "to_card": enemy_card
-        })
-        return prob
+        return prob, player_card, enemy, enemy_card
