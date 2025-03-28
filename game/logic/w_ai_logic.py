@@ -27,10 +27,39 @@ class LogicWAI(CaboLogic):
             if isinstance(player, BaseEnemy):
                 self._enemies.append(i)
 
-    def enemy_turn_start(self, pid: int):
+    def _ai_prep_cards(self, pid) -> list:
         cards: list = list()
         for player in self._players:
             if player.get_pid() == pid:
                 continue
             cards.append(player.get_hidden_cards())
-        self._players[pid].turn_start(State(cards, self._discard_pile.peek(), Phase.a1_DRAW_CARD))
+        return cards
+
+    def ai_phase1(self, pid: int) -> None:
+        deck_choice = self._players[pid].phase1(State(self._ai_prep_cards(pid),
+                                                      self._discard_pile.peek(), Phase.a1_DRAW_CARD))
+        self.draw(pid, deck_choice)
+
+    def ai_phase2(self, pid: int) -> None:
+        put_down_choice = self._players[pid].phase2(State(self._ai_prep_cards(pid),
+                                                          self._discard_pile.peek(), Phase.a2_PUT_CARD_DOWN))
+        if put_down_choice > 0:
+            self.swap_self(pid, put_down_choice - 1)
+        self.discard(pid)
+        self._players[pid].update_memory_self()
+
+    def ai_phase3(self, pid: int) -> None:
+        peek_choice = self._players[pid].phase3(State(self._ai_prep_cards(pid),
+                                                      self._discard_pile.peek(), Phase.a3_PEEK_EFFECT))
+        self._peek_effect(pid, peek_choice)
+        self._players[pid].update_memory_self()
+
+    def ai_phase4(self, pid: int) -> None:
+        player, card = self._players[pid].phase4(State(self._ai_prep_cards(pid),
+                                                       self._discard_pile.peek(), Phase.a4_SPY_EFFECT))
+        self._spy_effect(player, card)
+
+    def ai_phase5(self, pid: int) -> None:
+        player_card, enemy, enemy_card = self._players[pid].phase5(State(self._ai_prep_cards(pid),
+                                                                         self._discard_pile.peek(), Phase.a5_SWAP_EFFECT))
+        self._swap_effect(pid, enemy, player_card, enemy_card)

@@ -20,5 +20,8 @@
         "black": "icons/black.png",
         "purple": "icons/purple.png",
         "white": "icons/white.png"
+    },
+    "ai": {
+        "easy_nn": "ai/easy_nn.pth"
     }
 }
