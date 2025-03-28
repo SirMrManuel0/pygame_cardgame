@@ -15,6 +15,9 @@ class Deck:
     def __init__(self):
         self._cards: list = list()
 
+    def __iter__(self):
+        return self._cards
+
 class Card:
     def __init__(self, value: int = 0):
         assertion.assert_types(value, Types.INT.value, ArgumentError, code=ArgumentCodes.NOT_INT)
