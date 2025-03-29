@@ -22,15 +22,33 @@
         "white": "icons/white.png"
     },
     "ai": {
-        "training_logs": {
-            "Easy": "ai/training_logs/Easy.log",
-            "Medium": "ai/training_logs/Medium.log",
-            "Hard": "ai/training_logs/Hard.log",
-            "Impossible": "ai/training_logs/Impossible.log"
+        "trainings_data": {
+            "Easy": "ai/trainings_data/Easy.json",
+            "Medium": "ai/trainings_data/Medium.json",
+            "Hard": "ai/trainings_data/Hard.json",
+            "Impossible": "ai/trainings_data/Impossible.json"
         },
         "easy": {
+            "2p": {
+                "1c": "ai/easy/2p/1c.pth",
+                "2c": "ai/easy/2p/2c.pth",
+                "3c": "ai/easy/2p/3c.pth",
+                "4c": "ai/easy/2p/4c.pth",
+                "5c": "ai/easy/2p/5c.pth"
+            },
+            "3p": {
+                "1c": "ai/easy/3p/1c.pth",
+                "2c": "ai/easy/3p/2c.pth",
+                "3c": "ai/easy/3p/3c.pth",
+                "4c": "ai/easy/3p/4c.pth",
+                "5c": "ai/easy/3p/5c.pth"
+            },
             "4p": {
-                "4c": "ai/easy/4p/4c.pth"
+                "1c": "ai/easy/4p/1c.pth",
+                "2c": "ai/easy/4p/2c.pth",
+                "3c": "ai/easy/4p/3c.pth",
+                "4c": "ai/easy/4p/4c.pth",
+                "5c": "ai/easy/4p/5c.pth"
             }
         }
     }

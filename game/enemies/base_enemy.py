@@ -46,6 +46,12 @@ class BaseEnemy(Player):
         self._last_requests: list = list()
         self._vec_cards: Vector = Vector([card.get_value() for card in self._hidden_cards.get_cards()])
         self._memory_mask_self: Vector = Vector(dimension=cards)
+        if self._memory_mask_self.get_dimension() > 2:
+            self._memory_mask_self[0] = 1
+            self._memory_mask_self[1] = 1
+        elif self._memory_mask_self.get_dimension() == 2:
+            self._memory_mask_self[0] = 1
+        self._memory_mask_self.randomise(2)
         self._memory_self: Vector = Vector(dimension=cards)
         self.update_memory_self(False)
         self._cards_enemies: Matrix = Matrix(rows=player_count, columns=cards)

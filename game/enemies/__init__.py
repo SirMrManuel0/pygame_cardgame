@@ -2,7 +2,7 @@ from game.enemies.base_enemy import BaseEnemy, Difficulties
 from game.enemies.enemies import EasyEnemy
 from game.enemies.static import create_enemy
 from game.enemies.policy_nn import PolicyNN
-from game.enemies.train import train
+from game.enemies.train import train, rewards_color
 
 __all__ = [
     "BaseEnemy",
@@ -10,5 +10,6 @@ __all__ = [
     "Difficulties",
     "create_enemy",
     "PolicyNN",
-    "train"
+    "train",
+    "rewards_color"
 ]
