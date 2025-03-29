@@ -6,9 +6,13 @@ class DiscardPile(gd.Deck):
         super().__init__()
 
     def draw(self) -> gd.Card:
+        if len(self._cards) == 0:
+            return gd.Card(-1)
         return self._cards.pop(0)
 
     def peek(self) -> gd.Card:
+        if len(self._cards) == 0:
+            return gd.Card(-1)
         return self._cards[0]
 
     def add(self, card: gd.Card) -> None:

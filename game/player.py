@@ -1,3 +1,5 @@
+from types import NoneType
+
 from .deck import PlayerDeck, GameDeck, Card
 from game.errors import *
 
@@ -12,7 +14,7 @@ class Player:
         t: list = [game_deck.draw() for i in range(cards)]
         self._hidden_cards: PlayerDeck = PlayerDeck(t)
         self._pid = pid
-        self._active_card: Card | None = None
+        self._active_card: Card = Card(-1)
 
     def get_hidden_cards(self) -> list:
         return self._hidden_cards.get_cards()
@@ -31,7 +33,7 @@ class Player:
         self._pid = new_id
 
     def set_active_card(self, card: Card) -> None:
-        assertion.assert_type(card, Card, ArgumentError, code=ArgumentCodes.NOT_CARD)
+        assertion.assert_type(card, (Card, NoneType), ArgumentError, code=ArgumentCodes.NOT_CARD)
         self._active_card = card
 
     def get_active_card(self) -> Card:
