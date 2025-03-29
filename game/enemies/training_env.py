@@ -70,63 +70,68 @@ class TrainingEnv:
         for player in self._logic:
             pid: int = player.get_pid()
 
-            logging.info(f"It is {pid} / {self._players_count} turn.")
+            logging.info(f"It is {pid+1} / {self._players_count} turn.")
 
             if self._last == pid:
                 break
 
-            if self._logic.event_handler.has_event(LogicEvents.EMPTY_DECK):
-                self._logic.event_handler.remove_event_by_kind(LogicEvents.EMPTY_DECK)
-                self._logic.restock_deck(Shuffle.DUMP)
-                logging.info(f"EVENT: The deck has been shuffled.")
+            if self._round_counter == 1 and pid == 0:
+                self._logic.draw(pid, DrawOptions.GAME_DECK)
+            else:
+                if self._logic.event_handler.has_event(LogicEvents.EMPTY_DECK):
+                    self._logic.event_handler.remove_event_by_kind(LogicEvents.EMPTY_DECK)
+                    self._logic.restock_deck(Shuffle.DUMP)
+                    logging.info(f"EVENT: The deck has been shuffled.")
 
-            probs, data, action_probs = self._logic.ai_phase1(pid)
-            self._probs.append((probs, action_probs))
+                probs, data, action_probs = self._logic.ai_phase1(pid)
+                self._probs.append((probs, action_probs))
 
-            card_val: int = player.get_active_card().get_value()
+                card_val: int = player.get_active_card().get_value()
 
-            if data == DrawOptions.DISCARD_PILE:
-                if card_val == 13:
-                    self._rewards.append(-1)
-                elif card_val in [7, 8, 9, 10, 11, 12]:
-                    self._rewards.append(1)
-                elif card_val < 4:
-                    self._rewards.append(1)
-                elif 3 < card_val < 7:
-                    self._rewards.append(.5)
+                if data == DrawOptions.DISCARD_PILE:
+                    if card_val == 13:
+                        self._rewards.append(-1)
+                    elif card_val in [7, 8, 9, 10, 11, 12]:
+                        self._rewards.append(1)
+                    elif card_val < 4:
+                        self._rewards.append(1)
+                    elif 3 < card_val < 7:
+                        self._rewards.append(.5)
 
-            top_card_discard: int = self._logic.get_discard_pile().peek().get_value()
+                top_card_discard: int = self._logic.get_discard_pile().peek().get_value()
 
-            if data == DrawOptions.GAME_DECK:
-                if top_card_discard < 4:
-                    self._rewards.append(-1)
-                elif top_card_discard == 13:
-                    self._rewards.append(1)
-                elif top_card_discard in [7, 8, 9, 10, 11, 12]:
-                    self._rewards.append(-1)
-                elif card_val < 4:
-                    self._rewards.append(1)
-                elif card_val == 13:
-                    self._rewards.append(-1)
-                else:
-                    self._rewards.append(0)
+                if data == DrawOptions.GAME_DECK:
+                    if top_card_discard < 4:
+                        self._rewards.append(-1)
+                    elif top_card_discard == 13:
+                        self._rewards.append(1)
+                    elif top_card_discard in [7, 8, 9, 10, 11, 12]:
+                        self._rewards.append(-1)
+                    elif card_val < 4:
+                        self._rewards.append(1)
+                    elif card_val == 13:
+                        self._rewards.append(-1)
+                    else:
+                        self._rewards.append(0)
 
-            if data == DrawOptions.CABO:
-                if player.get_score() > 16:
-                    self._rewards.append(-1)
-                elif player.get_score() > 6:
-                    self._rewards.append(1)
-                else:
-                    self._rewards.append(1.5)
+                if data == DrawOptions.CABO:
+                    if player.get_score() > 16:
+                        self._rewards.append(-1)
+                    elif player.get_score() > 6:
+                        self._rewards.append(1)
+                    elif player.get_score() <= 2:
+                        self._rewards.append(6)
+                    else:
+                        self._rewards.append(1.5)
 
-            logging.info(f"Card has been drawn with val: {card_val} from {data}. Discard Pile: {top_card_discard} | "
-                         f"probs: {probs} | reward: {self._rewards[-1]}")
+                logging.info(f"Card has been drawn with val: {card_val} from {data}. Discard Pile: {top_card_discard} | "
+                             f"probs: {probs} | reward: {self._rewards[-1]}")
 
-            if self._logic.event_handler.has_event(LogicEvents.CABO):
-                self._logic.event_handler.remove_event_by_kind(LogicEvents.CABO)
-                self._alive: bool = False
-                self._last = pid
-                logging.info(f"EVENT: Cabo has been called by {pid}.")
+                if self._logic.event_handler.has_event(LogicEvents.CABO):
+                    self._logic.event_handler.remove_event_by_kind(LogicEvents.CABO)
+                    self._alive: bool = False
+                    self._last = pid
+                    logging.info(f"EVENT: Cabo has been called by {pid}.")
 
             prob, active_card, swapped_card, put_down_choice, mask, action_probs = self._logic.ai_phase2(pid)
 
@@ -187,7 +192,7 @@ class TrainingEnv:
                     self._probs.append(self._logic.ai_phase4(pid))
                     mask_after: Matrix = player.get_enemy_mask()
                     if mask_before == mask_after:
-                        if mask_before == Matrix(rows=self._players_count, columns=self._cards, default_value=1):
+                        if mask_before == Matrix(rows=self._players_count-1, columns=self._cards, default_value=1):
                             self._rewards.append(0)
                         else:
                             self._rewards.append(-1)

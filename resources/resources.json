@@ -28,6 +28,10 @@
             "Hard": "ai/training_logs/Hard.log",
             "Impossible": "ai/training_logs/Impossible.log"
         },
-        "easy_nn": "ai/easy_nn.pth"
+        "easy": {
+            "4p": {
+                "4c": "ai/easy/4p/4c.pth"
+            }
+        }
     }
 }

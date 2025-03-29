@@ -39,7 +39,7 @@ class BaseEnemy(Player):
         self._actions_per_phase = [3, 1 + self._cards, self._cards, player_count * self._cards,
                                    (self._cards ** 2) * player_count]
         # other player hidden cards + self hidden cards + discard pile + hand card + phases
-        self._input_dim = (self._player_count * self._cards + 4 + 1 + 1 + 5) * history
+        self._input_dim = (self._player_count * self._cards + self._cards + 1 + 1 + 5) * history
         self._history: int = history
         self._alpha: float = .5
         self._heat: float = 0
@@ -58,10 +58,11 @@ class BaseEnemy(Player):
         if not rand:
             return
         for i, row in enumerate(self._memory_enemies):
-            for j, value in enumerate(self._memory_enemies):
+            for j, value in enumerate(row):
                 if self._memory_enemies[i][j] == -1:
                     continue
-                self._memory_enemies[i][j] = -1 if random.random() <= self._alpha else value
+                a = -1 if random.random() <= self._alpha else value
+                self._memory_enemies[i][j] = a
                 if self._memory_enemies[i][j] == -1:
                     self._memory_mask_enemies[i][j] = 0
 
@@ -96,11 +97,11 @@ class BaseEnemy(Player):
         self._last_requests.append(x)
         if len(self._last_requests) > self._history:
             self._last_requests.pop(0)
-        if len(self._last_requests) > 0:
-            for y in self._last_requests:
+        if len(self._last_requests) > 1:
+            for y in self._last_requests[:-1]:
                 x = torch.cat([x, y])
         while len(x) < self._input_dim:
-            x = torch.cat([x, torch.tensor([0])])
+            x = torch.cat([x, torch.tensor([-1])])
         list_, action_probs = self._nn.forward(x, state["phase"].value)
         return Vector(list_), action_probs
 
@@ -167,18 +168,6 @@ class BaseEnemy(Player):
         self._memory_mask_enemies[enemy][card] = int(unmasked)
         self.update_memory_enemies(False)
 
-    def save(self):
-        torch.save(self._nn.state_dict(), get_path_resource(*self._path))
-
-    def load(self):
-        if os.path.exists(get_path_resource(*self._path)) and os.path.getsize(get_path_resource(*self._path)) > 0:
-            self._nn.load_state_dict(torch.load(get_path_resource(*self._path)))
-            self._nn.eval()
-
-    def _set_path(self, path: tuple):
-        self._path = path
-        self.load()
-
     def get_self_mask(self) -> Vector:
         return self._memory_mask_self
 
@@ -206,9 +195,8 @@ class BaseEnemy(Player):
     def get_actions_per_phase(self) -> list:
         return self._actions_per_phase
 
-    def __del__(self):
-        if len(self._path) > 1:
-            self.save()
+    def get_path(self) -> tuple:
+        return self._path
 
 
 class State:

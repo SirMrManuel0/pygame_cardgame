@@ -1,5 +1,8 @@
+import sys
+
 import torch
 from torch import optim
+from tqdm import tqdm
 
 from game.deck import GameDeck
 from game.enemies.policy_nn import PolicyNN
@@ -11,12 +14,12 @@ from game.enemies.training_env import TrainingEnv
 def train(difficulty: Difficulties = Difficulties.EASY,
           episodes: int = 100, cards: int = 4, players: int = 4, max_rounds: int = 20):
     temp_en = create_enemy(difficulty, players-1, GameDeck(), cards)
-    PolNN: PolicyNN = PolicyNN(temp_en.get_input_dim(), temp_en.get_actions_per_phase())
+    PolNN: PolicyNN = PolicyNN(temp_en.get_input_dim(), temp_en.get_actions_per_phase(), temp_en.get_path())
     del temp_en
     optimizer = optim.Adam(PolNN.parameters(), lr=0.001)
     gamma = 0.99
 
-    for episode in range(episodes):
+    for episode in tqdm(range(episodes), dynamic_ncols=True, leave=False):
         env: TrainingEnv = TrainingEnv(difficulty, PolNN, cards, players, max_rounds)
         rewards: list = [torch.tensor(reward) for reward in env.get_rewards()]
         log_probs: list = [action_probs for _, action_probs in env.get_probs()]
@@ -40,4 +43,8 @@ def train(difficulty: Difficulties = Difficulties.EASY,
         loss.backward()
         optimizer.step()
 
-        print(f"Episode {episode}, Loss: {loss.item()}")
+        tqdm.write(f"Episode {episode+1} / {episodes}, Loss: {loss.item()}")
+        sys.stdout.flush()
+
+    PolNN.save()
+    del PolNN
