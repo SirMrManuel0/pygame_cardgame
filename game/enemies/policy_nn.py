@@ -1,15 +1,21 @@
+import os
+
 import numpy as np
 import torch
 import torch.nn as nn
 
+from game import get_path_resource
+
+
 class PolicyNN(nn.Module):
-    def __init__(self, input_dim, action_dim_per_phase):
+    def __init__(self, input_dim, action_dim_per_phase, path: tuple):
         super(PolicyNN, self).__init__()
         self._fc1 = nn.Linear(input_dim, 128)
         self._hidden1 = nn.Linear(128, 256)
         self._hidden2 = nn.Linear(256, 128)
         self._fc2 = nn.Linear(128, sum(action_dim_per_phase))
         self._action_dim_per_phase = action_dim_per_phase
+        self._path: tuple = path
 
     def forward(self, x, phase_idx):
         """
@@ -29,5 +35,22 @@ class PolicyNN(nn.Module):
         valid_action_logits = action_logits[start_idx:end_idx]
 
         action_probs = torch.softmax(valid_action_logits, dim=-1)
+        training_action_prob = torch.softmax(action_logits, dim=-1)
 
-        return action_probs.detach().numpy().tolist(), action_probs
+        return action_probs.detach().numpy().tolist(), training_action_prob
+
+    def load(self):
+        if os.path.exists(get_path_resource(*self._path)) and os.path.getsize(get_path_resource(*self._path)) > 0:
+            self.load_state_dict(torch.load(get_path_resource(*self._path)))
+            self.eval()
+
+    def save(self):
+        torch.save(self.state_dict(), get_path_resource(*self._path))
+
+    def set_path(self, path: tuple):
+        self._path = path
+        self.load()
+
+    def __del__(self):
+        if len(self._path) > 1:
+            self.save()
