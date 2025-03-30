@@ -1,3 +1,4 @@
+import os
 import sys
 import time
 import torch
@@ -5,7 +6,7 @@ from torch import optim
 from tqdm import tqdm
 from colorama import Fore, Style
 
-from game import rnd
+from game import rnd, get_path_resource
 from game.deck import GameDeck
 from game.enemies.policy_nn import PolicyNN
 from game.enemies.base_enemy import Difficulties
@@ -18,10 +19,18 @@ def train(difficulty: Difficulties = Difficulties.EASY,
     temp_en = create_enemy(difficulty, players-1, GameDeck(), cards)
     PolNN: PolicyNN = PolicyNN(temp_en.get_input_dim(), temp_en.get_actions_per_phase(), temp_en.get_path())
     PolNN.load()
+    path = list(temp_en.get_path())
     del temp_en
     optimizer = optim.Adam(PolNN.parameters(), lr=0.001)
     gamma = 0.99
     all_rewards: list = list()
+
+    path[-1] = f"{path[-1][:path[-1].find("c") + 1]}_checkpoint"
+    if os.path.exists(get_path_resource(*path)) and os.path.getsize(get_path_resource(*path)) > 0:
+        checkpoint = torch.load(get_path_resource(*path))
+        PolNN.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+
     for episode in tqdm(range(episodes), dynamic_ncols=True, leave=False):
         env: TrainingEnv = TrainingEnv(difficulty, PolNN, cards, players, max_rounds)
         all_rewards += [float(reward) for reward in env.get_rewards()]
@@ -54,7 +63,7 @@ def train(difficulty: Difficulties = Difficulties.EASY,
 
         av_rew_color = rewards_color(average_rewards)
 
-        tqdm.write(f"Player {players} Cards {cards} | Episode {episode+1} / {episodes}, Loss: {loss.item()}."
+        tqdm.write(f"Player {players} Cards {cards} | Episode {episode+1:,.0f} / {episodes:,.0f}, Loss: {loss.item()}."
                    f"{av_rew_color} Average Reward {average_rewards}{Style.RESET_ALL}")
         sys.stdout.flush()
 
@@ -68,8 +77,10 @@ def train(difficulty: Difficulties = Difficulties.EASY,
     print(f"{av_rew_color}Average Reward: {average_rewards}{Style.RESET_ALL}")
     time.sleep(1)
 
-    PolNN.save()
-    del PolNN
+    torch.save({
+        'model_state_dict': PolNN.state_dict(),
+        'optimizer_state_dict': optimizer.state_dict(),
+    }, get_path_resource(*path))
 
     return average_rewards
 

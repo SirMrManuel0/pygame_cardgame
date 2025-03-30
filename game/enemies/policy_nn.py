@@ -59,6 +59,6 @@ class PolicyNN(nn.Module):
         self._path = path
         self.load()
 
-    def __del__(self):
-        if len(self._path) > 1:
-            self.save()
+    #def __del__(self):
+    #    if len(self._path) > 1:
+    #        self.save()

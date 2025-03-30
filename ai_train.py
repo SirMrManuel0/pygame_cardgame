@@ -8,13 +8,14 @@ from colorama import Style
 min_player = 2
 max_player = 4
 max_cards = 5
-episodes = 6400
+max_rounds = 100
+episodes = 10
 difficulty = Difficulties.EASY
 path = ("ai", "trainings_data", "Easy")
 
 for players in range(min_player, max_player + 1):
     for cards in range(1, max_cards + 1):
-        rewards: float = train(Difficulties.EASY, cards=cards, players=players, episodes=episodes)
+        rewards: float = train(Difficulties.EASY, cards=cards, players=players, episodes=episodes, max_rounds=max_rounds)
         data: dict = dict()
         with open(get_path_resource(*path), "r", encoding="utf-8") as js:
             data = json.load(js)
