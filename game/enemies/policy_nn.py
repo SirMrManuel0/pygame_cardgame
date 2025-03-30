@@ -12,7 +12,11 @@ class PolicyNN(nn.Module):
         super(PolicyNN, self).__init__()
         self._fc1 = nn.Linear(input_dim, 128)
         self._hidden1 = nn.Linear(128, 256)
-        self._hidden2 = nn.Linear(256, 128)
+        self._hidden2 = nn.Linear(256, 512)
+        self._hidden3 = nn.Linear(512, 1024)
+        self._hidden4 = nn.Linear(1024, 512)
+        self._hidden5 = nn.Linear(512, 256)
+        self._hidden6 = nn.Linear(256, 128)
         self._fc2 = nn.Linear(128, sum(action_dim_per_phase))
         self._action_dim_per_phase = action_dim_per_phase
         self._path: tuple = path
@@ -28,6 +32,10 @@ class PolicyNN(nn.Module):
         x = torch.relu(self._fc1(x))
         x = torch.relu(self._hidden1(x))
         x = torch.relu(self._hidden2(x))
+        x = torch.relu(self._hidden3(x))
+        x = torch.relu(self._hidden4(x))
+        x = torch.relu(self._hidden5(x))
+        x = torch.relu(self._hidden6(x))
         action_logits = self._fc2(x)
 
         start_idx = sum(self._action_dim_per_phase[:phase_idx])
@@ -51,6 +59,6 @@ class PolicyNN(nn.Module):
         self._path = path
         self.load()
 
-    def __del__(self):
-        if len(self._path) > 1:
-            self.save()
+    #def __del__(self):
+    #    if len(self._path) > 1:
+    #        self.save()

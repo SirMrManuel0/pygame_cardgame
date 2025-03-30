@@ -46,12 +46,24 @@ class BaseEnemy(Player):
         self._last_requests: list = list()
         self._vec_cards: Vector = Vector([card.get_value() for card in self._hidden_cards.get_cards()])
         self._memory_mask_self: Vector = Vector(dimension=cards)
+        if self._memory_mask_self.get_dimension() > 2:
+            self._memory_mask_self[0] = 1
+            self._memory_mask_self[1] = 1
+        elif self._memory_mask_self.get_dimension() == 2:
+            self._memory_mask_self[0] = 1
+        self._memory_mask_self.randomise(2)
         self._memory_self: Vector = Vector(dimension=cards)
         self.update_memory_self(False)
         self._cards_enemies: Matrix = Matrix(rows=player_count, columns=cards)
         self._memory_enemies: Matrix = Matrix(rows=player_count, columns=cards)
         self._memory_mask_enemies: Matrix = Matrix(rows=player_count, columns=cards)
         self.update_memory_enemies(False)
+
+    def set_cards_enemies(self, enemies_cards: list[list[Card]]):
+        for i, row in enumerate(enemies_cards):
+            for j, card in enumerate(row):
+                value = card.get_value()
+                self._cards_enemies[i][j] = value
 
     def update_memory_enemies(self, rand: bool = True):
         self._memory_enemies = self._cards_enemies.where(self._memory_mask_enemies)
@@ -105,7 +117,8 @@ class BaseEnemy(Player):
         list_, action_probs = self._nn.forward(x, state["phase"].value)
         return Vector(list_), action_probs
 
-    def phase_1(self, state) -> tuple[float, DrawOptions, torch.Tensor]:
+    def phase_1(self, state, enemy_cards) -> tuple[float, DrawOptions, torch.Tensor]:
+        self.set_cards_enemies(enemy_cards)
         self.update_memory_self()
         self.update_memory_enemies()
         output, action_probs = self._nn_call(state)
