@@ -1,6 +1,8 @@
 import os
 import sys
 import time
+
+import numpy as np
 import torch
 from torch import optim
 from tqdm import tqdm
@@ -24,6 +26,8 @@ def train(difficulty: Difficulties = Difficulties.EASY,
     optimizer = optim.Adam(PolNN.parameters(), lr=0.001)
     gamma = 0.99
     all_rewards: list = list()
+    all_entropies = []
+    all_losses = []
 
     path[-1] = f"{path[-1][:path[-1].find("c") + 1]}_checkpoint"
     if os.path.exists(get_path_resource(*path)) and os.path.getsize(get_path_resource(*path)) > 0:
@@ -36,6 +40,9 @@ def train(difficulty: Difficulties = Difficulties.EASY,
         all_rewards += [float(reward) for reward in env.get_rewards()]
         rewards: list = [torch.tensor(reward) for reward in env.get_rewards()]
         log_probs: list = [action_probs for _, action_probs in env.get_probs()]
+        entropies = [rnd(float(-torch.sum(action_prob * torch.log(action_prob)))) for action_prob in log_probs]
+
+        all_entropies.extend(entropies)
 
         returns = []
         G = 0
@@ -50,44 +57,76 @@ def train(difficulty: Difficulties = Difficulties.EASY,
             loss.append(-log_prob * G)  # Policy gradient loss
 
         loss = torch.stack(loss).sum()
+        all_losses.append(loss.item())
 
         # Backpropagation
         optimizer.zero_grad()
         loss.backward()
+
+        grad_norm = torch.norm(torch.stack([p.grad.norm() for p in PolNN.parameters() if p.grad is not None]))
+
         optimizer.step()
 
-        average_rewards: float = 0
-        for reward in rewards:
-            average_rewards += float(reward.item())
-        average_rewards = rnd(average_rewards / len(rewards))
+        avg_reward = rnd(np.mean(rewards))
+        std_reward = rnd(np.std(rewards))
+        moving_avg_reward = rnd(np.mean(all_rewards[-100:])) if len(all_rewards) > 100 else rnd(np.mean(all_rewards))
+        avg_entropy = rnd(np.mean(all_entropies))
 
-        av_rew_color = rewards_color(average_rewards)
+        av_rew_color = rewards_color(avg_reward)
 
-        tqdm.write(f"Player {players} Cards {cards} | Episode {episode+1:,.0f} / {episodes:,.0f}, Loss: {loss.item()}."
-                   f"{av_rew_color} Average Reward {average_rewards}{Style.RESET_ALL}")
+        tqdm.write(
+            f"Player {players} Cards {cards} | Episode {episode + 1:,.0f} / {episodes:,.0f}, "
+            f"{av_rew_color} Average Reward {avg_reward}{Style.RESET_ALL} "
+            f"{rewards_color(std_reward)}Std Reward: {std_reward:.4f}{Style.RESET_ALL}, "
+            f"Moving Avg Reward: {moving_avg_reward:.4f}, "
+            f"{loss_color(float(loss.item()))}Loss: {loss.item()}{Style.RESET_ALL}, "
+            f"{entropy_color(avg_entropy)}Entropy: {avg_entropy:.4f}{Style.RESET_ALL}, "
+            f"Grad Norm: {grad_norm:.4f}."
+        )
+
         sys.stdout.flush()
 
-    average_rewards: float = 0
-    for reward in all_rewards:
-        average_rewards += float(reward)
-    average_rewards = rnd(average_rewards / len(all_rewards))
+    avg_reward = rnd(np.mean(all_rewards))
+    std_reward = rnd(np.std(all_rewards))
+    moving_avg_reward = rnd(np.mean(all_rewards[-100:])) if len(all_rewards) > 100 else rnd(np.mean(all_rewards))
+    avg_loss = rnd(np.mean(all_losses))
+    avg_entropy = rnd(np.mean(all_entropies))
 
-    av_rew_color = rewards_color(average_rewards)
+    av_rew_color = rewards_color(avg_reward)
 
-    print(f"{av_rew_color}Average Reward: {average_rewards}{Style.RESET_ALL}")
+    print(f"Final Stats - {av_rew_color}Avg Reward: {avg_reward}{Style.RESET_ALL}, "
+          f"{rewards_color(std_reward)}Std: {std_reward}{Style.RESET_ALL}, "
+          f"Moving Avg: {moving_avg_reward}, "
+          f"{loss_color(avg_loss)}Avg Loss: {avg_loss}{Style.RESET_ALL}, "
+          f"{entropy_color(avg_entropy)}Avg Entropy: {avg_entropy}{Style.RESET_ALL}")
+
     time.sleep(1)
-
+    PolNN.save()
     torch.save({
         'model_state_dict': PolNN.state_dict(),
         'optimizer_state_dict': optimizer.state_dict(),
     }, get_path_resource(*path))
 
-    return average_rewards
+    return avg_reward, std_reward, moving_avg_reward, avg_loss, avg_entropy
 
 def rewards_color(reward: float) -> Fore:
     av_rew_color = Fore.RED
-    if reward >= 1:
+    if 0.5 <= reward <= 2.5:
         av_rew_color = Fore.GREEN
-    elif 0 < reward < 1:
+    elif 2.5 < reward or 0 <= reward < 0.5:
         av_rew_color = Fore.YELLOW
     return av_rew_color
+
+def entropy_color(entropy: float) -> Fore:
+    entropy_color_ = Fore.RED
+    if .1 <= entropy <= 1:
+        entropy_color_ = Fore.GREEN
+    return entropy_color_
+
+def loss_color(loss: float) -> Fore:
+    loss_color_ = Fore.RED
+    if .001 <= loss <= .1:
+        loss_color_ = Fore.YELLOW
+    elif loss < .001:
+        loss_color_ = Fore.GREEN
+    return loss_color_

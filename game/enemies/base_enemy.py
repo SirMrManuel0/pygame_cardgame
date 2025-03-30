@@ -59,6 +59,12 @@ class BaseEnemy(Player):
         self._memory_mask_enemies: Matrix = Matrix(rows=player_count, columns=cards)
         self.update_memory_enemies(False)
 
+    def set_cards_enemies(self, enemies_cards: list[list[Card]]):
+        for i, row in enumerate(enemies_cards):
+            for j, card in enumerate(row):
+                value = card.get_value()
+                self._cards_enemies[i][j] = value
+
     def update_memory_enemies(self, rand: bool = True):
         self._memory_enemies = self._cards_enemies.where(self._memory_mask_enemies)
         if not rand:
@@ -111,7 +117,8 @@ class BaseEnemy(Player):
         list_, action_probs = self._nn.forward(x, state["phase"].value)
         return Vector(list_), action_probs
 
-    def phase_1(self, state) -> tuple[float, DrawOptions, torch.Tensor]:
+    def phase_1(self, state, enemy_cards) -> tuple[float, DrawOptions, torch.Tensor]:
+        self.set_cards_enemies(enemy_cards)
         self.update_memory_self()
         self.update_memory_enemies()
         output, action_probs = self._nn_call(state)

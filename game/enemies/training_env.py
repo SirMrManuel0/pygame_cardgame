@@ -57,7 +57,6 @@ class TrainingEnv:
         for player in self._logic:
             pid: int = player.get_pid()
 
-
             if self._last == pid:
                 break
 
@@ -75,13 +74,15 @@ class TrainingEnv:
 
                 if data == DrawOptions.DISCARD_PILE:
                     if card_val == 13:
-                        self._rewards.append(-1)
+                        self._rewards.append(-3)
                     elif card_val in [7, 8, 9, 10, 11, 12]:
                         self._rewards.append(1)
                     elif card_val < 4:
-                        self._rewards.append(3)
-                    elif 3 < card_val < 7:
+                        self._rewards.append(4)
+                    elif 3 < card_val < 6:
                         self._rewards.append(1)
+                    else:
+                        self._rewards.append(.5)
 
                 top_card_discard: int = self._logic.get_discard_pile().peek().get_value()
 
@@ -103,7 +104,7 @@ class TrainingEnv:
                     if player.get_score() > 16:
                         self._rewards.append(-6)
                     elif player.get_score() > 9:
-                        self._rewards.append(-4)
+                        self._rewards.append(-2)
                     elif player.get_score() > 6:
                         self._rewards.append(1)
                     elif player.get_score() <= 2:
@@ -148,7 +149,6 @@ class TrainingEnv:
                     self._rewards.append(-1)
                 else:
                     self._rewards.append(0)
-
 
             events: list = self._logic.get_events()
             if len(events) == 0:
