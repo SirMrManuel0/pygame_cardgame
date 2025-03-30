@@ -28,6 +28,8 @@ def train(difficulty: Difficulties = Difficulties.EASY,
     all_rewards: list = list()
     all_entropies = []
     all_losses = []
+    all_rounds: list = []
+    total_rounds: int = 0
 
     path[-1] = f"{path[-1][:path[-1].find("c") + 1]}_checkpoint"
     if os.path.exists(get_path_resource(*path)) and os.path.getsize(get_path_resource(*path)) > 0:
@@ -41,6 +43,8 @@ def train(difficulty: Difficulties = Difficulties.EASY,
         rewards: list = [torch.tensor(reward) for reward in env.get_rewards()]
         log_probs: list = [action_probs for _, action_probs in env.get_probs()]
         entropies = [rnd(float(-torch.sum(action_prob * torch.log(action_prob)))) for action_prob in log_probs]
+        total_rounds += env.get_rounds()
+        all_rounds.append(env.get_rounds())
 
         all_entropies.extend(entropies)
 
@@ -76,12 +80,13 @@ def train(difficulty: Difficulties = Difficulties.EASY,
 
         tqdm.write(
             f"Player {players} Cards {cards} | Episode {episode + 1:,.0f} / {episodes:,.0f}, "
-            f"{av_rew_color} Average Reward {avg_reward}{Style.RESET_ALL} "
-            f"{rewards_color(std_reward)}Std Reward: {std_reward:.4f}{Style.RESET_ALL}, "
-            f"Moving Avg Reward: {moving_avg_reward:.4f}, "
-            f"{loss_color(float(loss.item()))}Loss: {loss.item()}{Style.RESET_ALL}, "
-            f"{entropy_color(avg_entropy)}Entropy: {avg_entropy:.4f}{Style.RESET_ALL}, "
-            f"Grad Norm: {grad_norm:.4f}."
+            f"{av_rew_color} Average Reward {avg_reward:.8f}{Style.RESET_ALL} "
+            f"{rewards_color(std_reward)}Std Reward: {std_reward:.8f}{Style.RESET_ALL}, "
+            f"Moving Avg Reward: {moving_avg_reward:.8f}, "
+            f"{loss_color(float(loss.item()))}Loss: {loss.item():.8f}{Style.RESET_ALL}, "
+            f"{entropy_color(avg_entropy)}Entropy: {avg_entropy:.8f}{Style.RESET_ALL}, "
+            f"Grad Norm: {grad_norm:.8f}, "
+            f"Rounds: {env.get_rounds()}."
         )
 
         sys.stdout.flush()
@@ -91,14 +96,20 @@ def train(difficulty: Difficulties = Difficulties.EASY,
     moving_avg_reward = rnd(np.mean(all_rewards[-100:])) if len(all_rewards) > 100 else rnd(np.mean(all_rewards))
     avg_loss = rnd(np.mean(all_losses))
     avg_entropy = rnd(np.mean(all_entropies))
-
+    avg_rounds = rnd(total_rounds / episodes)
     av_rew_color = rewards_color(avg_reward)
+    std_rounds = rnd(np.std(all_rounds))
 
-    print(f"Final Stats - {av_rew_color}Avg Reward: {avg_reward}{Style.RESET_ALL}, "
-          f"{rewards_color(std_reward)}Std: {std_reward}{Style.RESET_ALL}, "
-          f"Moving Avg: {moving_avg_reward}, "
-          f"{loss_color(avg_loss)}Avg Loss: {avg_loss}{Style.RESET_ALL}, "
-          f"{entropy_color(avg_entropy)}Avg Entropy: {avg_entropy}{Style.RESET_ALL}")
+    print(
+        f"Final Stats - {av_rew_color}Avg Reward: {avg_reward:.8f}{Style.RESET_ALL}, "
+        f"{rewards_color(std_reward)}Std: {std_reward:.8f}{Style.RESET_ALL}, "
+        f"Moving Avg: {moving_avg_reward:.8f}, "
+        f"{loss_color(avg_loss)}Avg Loss: {avg_loss:.8f}{Style.RESET_ALL}, "
+        f"{entropy_color(avg_entropy)}Avg Entropy: {avg_entropy:.8f}{Style.RESET_ALL}, "
+        f"Total Rounds: {total_rounds}, ",
+        f"Avg Rounds: {avg_rounds:.8f}, "
+        f"Std Rounds: {std_rounds:.8f}"
+    )
 
     time.sleep(1)
     PolNN.save()
@@ -107,7 +118,7 @@ def train(difficulty: Difficulties = Difficulties.EASY,
         'optimizer_state_dict': optimizer.state_dict(),
     }, get_path_resource(*path))
 
-    return avg_reward, std_reward, moving_avg_reward, avg_loss, avg_entropy
+    return avg_reward, std_reward, moving_avg_reward, avg_loss, avg_entropy, avg_rounds, std_rounds
 
 def rewards_color(reward: float) -> Fore:
     av_rew_color = Fore.RED

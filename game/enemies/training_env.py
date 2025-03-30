@@ -39,7 +39,7 @@ class TrainingEnv:
             self.round()
             if self._round_counter == self._max_rounds:
                 break
-
+        self._round_counter += 1
         self.round()
         self._winner = self._logic.get_winner()
         self._winner = self._winner[0]
@@ -52,6 +52,9 @@ class TrainingEnv:
 
     def get_probs(self) -> list:
         return self._probs
+
+    def get_rounds(self) -> int:
+        return self._round_counter
 
     def round(self):
         for player in self._logic:
@@ -101,16 +104,61 @@ class TrainingEnv:
                         self._rewards.append(0)
 
                 if data == DrawOptions.CABO:
-                    if player.get_score() > 16:
-                        self._rewards.append(-6)
-                    elif player.get_score() > 9:
-                        self._rewards.append(-2)
-                    elif player.get_score() > 6:
-                        self._rewards.append(1)
-                    elif player.get_score() <= 2:
-                        self._rewards.append(6)
+                    if self._cards == 4:
+                        if player.get_score() > 16:
+                            self._rewards.append(-6)
+                        elif player.get_score() > 9:
+                            self._rewards.append(-2)
+                        elif player.get_score() > 6:
+                            self._rewards.append(1)
+                        elif player.get_score() <= 2:
+                            self._rewards.append(6)
+                        else:
+                            self._rewards.append(1.5)
+                    elif self._cards >= 5:
+                        if player.get_score() > 18:
+                            self._rewards.append(-6)
+                        elif player.get_score() > 10:
+                            self._rewards.append(-2)
+                        elif player.get_score() > 7:
+                            self._rewards.append(1)
+                        elif player.get_score() <= 3:
+                            self._rewards.append(6)
+                        else:
+                            self._rewards.append(1.5)
+                    elif self._cards == 3:
+                        if player.get_score() > 13:
+                            self._rewards.append(-6)
+                        elif player.get_score() > 7:
+                            self._rewards.append(-2)
+                        elif player.get_score() > 4:
+                            self._rewards.append(1)
+                        elif player.get_score() <= 1:
+                            self._rewards.append(6)
+                        else:
+                            self._rewards.append(1.5)
+                    elif self._cards == 2:
+                        if player.get_score() > 10:
+                            self._rewards.append(-6)
+                        elif player.get_score() > 5:
+                            self._rewards.append(-2)
+                        elif player.get_score() > 3:
+                            self._rewards.append(1)
+                        elif player.get_score() <= 1:
+                            self._rewards.append(6)
+                        else:
+                            self._rewards.append(2)
                     else:
-                        self._rewards.append(1.5)
+                        if player.get_score() > 16:
+                            self._rewards.append(-6)
+                        elif player.get_score() > 9:
+                            self._rewards.append(-2)
+                        elif player.get_score() > 6:
+                            self._rewards.append(1)
+                        elif player.get_score() <= 2:
+                            self._rewards.append(6)
+                        else:
+                            self._rewards.append(1.5)
 
                 if self._logic.event_handler.has_event(LogicEvents.CABO):
                     self._logic.event_handler.remove_event_by_kind(LogicEvents.CABO)
