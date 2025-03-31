@@ -25,23 +25,13 @@ class HomePanel(Panel):
             Vector([globals.SIZE[0] / 2 - 200, 250]),
             400, 30,
             Vector([250, 241, 230]),
-            "Multiplayer",
+            "Play!",
             20
         )
         self.add_object(btn)
 
-        btn1 = Button(
-            Vector([globals.SIZE[0] / 2 - 200, 320]),
-            400, 30,
-            Vector([250, 241, 230]),
-            "AI",
-            20
-        )
-
-        self.add_object(btn1)
-
         btn2 = Button(
-            Vector([globals.SIZE[0] / 2 - 200, 400]),
+            Vector([globals.SIZE[0] / 2 - 200, 330]),
             400, 30,
             Vector([250, 241, 230]),
             "Anleitungen",
@@ -51,7 +41,7 @@ class HomePanel(Panel):
         self.add_object(btn2)
 
         btn3 = Button(
-            Vector([globals.SIZE[0] / 2 - 200, 480]),
+            Vector([globals.SIZE[0] / 2 - 200, 410]),
             400, 30,
             Vector([250, 241, 230]),
             "Check out the code",
