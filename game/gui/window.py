@@ -15,32 +15,31 @@ class Window:
         self._clock = pygame.time.Clock()
         self._screen = pygame.display.set_mode(self._dimension.get_dimensions())
         self._allPanels = [HomePanel(), GamePanel(), RulesPanel()]
-        self._backgroundImage =  pygame.image.load("./resources/images/background.jpg")
+        self._backgroundImage = pygame.image.load("./resources/images/background.jpg")
         self._backgroundImageRect = self._backgroundImage.get_rect()
         self._panel = self._allPanels[0]
         self._cursorImg = pygame.image.load("./resources/cursor/cursor.png")
-        self._cursorImg  = pygame.transform.scale(self._cursorImg, (22, 22))
+        self._cursorImg = pygame.transform.scale(self._cursorImg, (22, 22))
         self._cursorImgRect = self._cursorImg.get_rect()
 
-        def backToHomePanel():
+        def back_to_home_panel():
             self._panel = self._allPanels[0]
 
-        def homePanelButton1FunctionListener():
+        def home_panel_button1_function_listener():
             self._panel = self._allPanels[1]
 
-        def homePanelButton3FunctionListener():
+        def home_panel_button3_function_listener():
             self._panel = self._allPanels[2]
 
-        def homePanelButton4FunctionListener():
+        def home_panel_button4_function_listener():
             webbrowser.open('https://github.com/SirMrManuel0/pygame_cardgame')
 
-        self._allPanels[0].get_object(1).addEventListener(homePanelButton1FunctionListener)
-        self._allPanels[0].get_object(2).addEventListener(homePanelButton1FunctionListener)
-        self._allPanels[0].get_object(4).addEventListener(homePanelButton4FunctionListener)
-        self._allPanels[0].get_object(3).addEventListener(homePanelButton3FunctionListener)
-        self._allPanels[1].get_object(0).addEventListener(backToHomePanel)
-        self._allPanels[2].get_object(0).addEventListener(backToHomePanel)
-
+        self._allPanels[0].get_object(1).add_event_listener(home_panel_button1_function_listener)
+        self._allPanels[0].get_object(2).add_event_listener(home_panel_button1_function_listener)
+        self._allPanels[0].get_object(4).add_event_listener(home_panel_button4_function_listener)
+        self._allPanels[0].get_object(3).add_event_listener(home_panel_button3_function_listener)
+        self._allPanels[1].get_object(0).add_event_listener(back_to_home_panel)
+        self._allPanels[2].get_object(0).add_event_listener(back_to_home_panel)
 
         pygame.display.set_caption(self._title)
         pygame.display.set_icon(pygame.image.load(game.get_path_resource("icons", "purple")))
@@ -58,11 +57,13 @@ class Window:
     def update(self):
         self._panel.update()
 
-
+    def event(self, event):
+        self._panel.event(event)
 
     def run(self):
         while self._alive:
             for event in pygame.event.get():
+                self.event(event)
                 if event.type == pygame.QUIT:
                     self._alive = False
                     break
@@ -74,16 +75,16 @@ class Window:
             self._screen.fill((0, 0, 0))
             self._screen.blit(self._backgroundImage, self._backgroundImageRect)
 
-            oneIsHoverd = False
-            for object in self._panel:
-                if type(object).__name__ == "Button":
-                    if (object.isHoverd()):
-                        oneIsHoverd = True
+            oneIsHovered = False
+            for object_ in self._panel:
+                if type(object_).__name__ == "Button":
+                    if object_.is_hovered():
+                        oneIsHovered = True
 
             self.draw()
             self.update()
 
-            if oneIsHoverd:
+            if oneIsHovered:
                 self._cursorImgRect.center = pygame.mouse.get_pos()
                 self._screen.blit(self._cursorImg, self._cursorImgRect)
                 pygame.mouse.set_visible(False)

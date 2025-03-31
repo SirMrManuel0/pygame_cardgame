@@ -16,8 +16,8 @@ class HomePanel(Panel):
 
         # self.add_object(a)
 
-        title = Text(Vector([10, 20]), Vector([255, 255, 255]), "Cabooo", 100)
-        title.centerAbsoluteX()
+        title = Text(Vector([10, 20]), Vector([255, 255, 255]), "Cabuh!", 100)
+        title.center_absolute_x()
 
         self.add_object(title)
 
@@ -62,3 +62,4 @@ class HomePanel(Panel):
 
         text = Text(Vector([10, globals.SIZE[1] - 20]), Vector([255, 255, 255]), "Ein Spiel von : Tarik, Louis & Vito", 20)
         self.add_object(text)
+        

@@ -19,6 +19,19 @@ class BaseObject:
     def update(self):
         ...
 
+    def click_listener(self):
+        for i in self._clickListener:
+            i()
+
+    def add_event_listener(self, func):
+        self._clickListener.append(func)
+
+    def event(self, event):
+        ...
+
+    def update(self):
+        ...
+
     def clickListener(self):
         for i in self._clickListener:
             i()

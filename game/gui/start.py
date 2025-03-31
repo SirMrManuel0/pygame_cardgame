@@ -11,7 +11,7 @@ class GuiHandler:
         pygame.init()
         self._base_dimension = gui.Dimension(globals.SIZE)
 
-        self._window = gui.Window(self._base_dimension, "Cabo")
+        self._window = gui.Window(self._base_dimension, "Cabuh!")
 
         if instant_run:
             self.run()

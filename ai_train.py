@@ -7,16 +7,17 @@ from game.enemies import train, Difficulties
 from game.enemies import rewards_color, loss_color, entropy_color
 from colorama import Style
 
-min_player = 2
+min_player = 4
 max_player = 4
+min_cards = 2
 max_cards = 5
 max_rounds = 100
-episodes = 30_000
+episodes = 50_000
 difficulty = Difficulties.EASY
 path = ("ai", "trainings_data", "Easy")
 
 for players in range(min_player, max_player + 1):
-    for cards in range(1, max_cards + 1):
+    for cards in range(min_cards, max_cards + 1):
 
         avg_reward, std_reward, moving_avg_reward, avg_loss, avg_entropy, avg_rounds, std_rounds = train(
             Difficulties.EASY,
