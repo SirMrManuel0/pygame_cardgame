@@ -15,7 +15,7 @@ class Window:
         self._clock = pygame.time.Clock()
         self._screen = pygame.display.set_mode(self._dimension.get_dimensions())
         self._allPanels = [HomePanel(), GamePanel(), RulesPanel()]
-        self._backgroundImage =  pygame.image.load("./resources/background.jpg")
+        self._backgroundImage =  pygame.image.load("./resources/images/background.jpg")
         self._backgroundImageRect = self._backgroundImage.get_rect()
         self._panel = self._allPanels[0]
         self._cursorImg = pygame.image.load("./resources/cursor/cursor.png")
