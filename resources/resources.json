@@ -29,5 +29,11 @@
             "Impossible": "ai/training_logs/Impossible.log"
         },
         "easy_nn": "ai/easy_nn.pth"
+    },
+    "cursor" : {
+        "Cursor" : "cursor/cursor.png"
+    },
+    "images" : {
+        "Background" : "images/background"
     }
 }
