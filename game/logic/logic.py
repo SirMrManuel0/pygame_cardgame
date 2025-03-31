@@ -1,4 +1,4 @@
-# from game import get_path_abs, get_path_resource
+ # from game import get_path_abs, get_path_resource
 from enum import Enum
 
 from game.player import Player

@@ -18,7 +18,6 @@ class Button(Rectangle):
         self._text.set_position(
             self._text._position[0] + (self._size[0] / 2) - (self._text.get_text_object().get_width() / 2),
             self._text._position[1] + (self._size[1] / 2) - (self._text.get_text_object().get_height() / 2)
-        )
 
     def draw(self, surface):
         pygame.draw.rect(
@@ -36,7 +35,6 @@ class Button(Rectangle):
 
     def update(self):
         pos = pygame.mouse.get_pos()
-
         # print("Grainca lijevo : " , (pos[0] > self._position[0]))
         # print("Grainca desno : " , (pos[0] < self._position[0] + self._size[0]))
         # print("Grainca gore : " , pos[1] > self._position[1])
