@@ -16,6 +16,49 @@ class HomePanel(Panel):
 
         # self.add_object(a)
 
-        btn = Button(Vector([10, 10]), 100, 100, Vector([0, 200, 0]), "Hello")
+        title = Text(Vector([10, 20]), Vector([255, 255, 255]), "Cabooo", 100)
+        title.centerAbsoluteX()
+
+        self.add_object(title)
+
+        btn = Button(
+            Vector([globals.SIZE[0] / 2 - 200, 250]),
+            400, 30,
+            Vector([250, 241, 230]),
+            "Multiplayer",
+            20
+        )
         self.add_object(btn)
 
+        btn1 = Button(
+            Vector([globals.SIZE[0] / 2 - 200, 320]),
+            400, 30,
+            Vector([250, 241, 230]),
+            "AI",
+            20
+        )
+
+        self.add_object(btn1)
+
+        btn2 = Button(
+            Vector([globals.SIZE[0] / 2 - 200, 400]),
+            400, 30,
+            Vector([250, 241, 230]),
+            "Anleitungen",
+            20
+        )
+
+        self.add_object(btn2)
+
+        btn3 = Button(
+            Vector([globals.SIZE[0] / 2 - 200, 480]),
+            400, 30,
+            Vector([250, 241, 230]),
+            "Check out the code",
+            20
+        )
+
+        self.add_object(btn3)
+
+        text = Text(Vector([10, globals.SIZE[1] - 20]), Vector([255, 255, 255]), "Ein Spiel von : Tarik, Louis & Vito", 20)
+        self.add_object(text)
