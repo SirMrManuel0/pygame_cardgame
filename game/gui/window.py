@@ -15,8 +15,6 @@ class Window:
         self._clock = pygame.time.Clock()
         self._screen = pygame.display.set_mode(self._dimension.get_dimensions())
         self._allPanels = [HomePanel(), GamePanel(), RulesPanel()]
-        self._backgroundImage =  pygame.image.load("./resources/images/background.jpg")
-        self._backgroundImageRect = self._backgroundImage.get_rect()
         self._panel = self._allPanels[0]
         self._cursorImg = pygame.image.load("./resources/cursor/cursor.png")
         self._cursorImg  = pygame.transform.scale(self._cursorImg, (22, 22))
@@ -75,8 +73,7 @@ class Window:
                     for func in self._events[event.type]:
                         func()
 
-            self._screen.fill((0, 0, 0))
-            self._screen.blit(self._backgroundImage, self._backgroundImageRect)
+            self._screen.fill((100, 100, 100))
 
             oneIsHoverd = False
             for object in self._panel:
