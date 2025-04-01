@@ -71,8 +71,10 @@ class Window:
                     for func in self._events[event.type]:
                         func()
 
-            self._screen.fill((62,76,84))
-            pygame.draw.circle(self._screen, [248, 244, 228, 255], pygame.mouse.get_pos(), 30)
+            self._screen.fill(gui.globals.BACKGROUND_COLOR.get_data())
+            light: list = list(gui.globals.COLOR_OF_LIGHT.get_data())
+            light.append(0)
+            pygame.draw.circle(self._screen, light, pygame.mouse.get_pos(), 30)
 
             oneIsHovered = False
             for object_ in self._panel:

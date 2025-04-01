@@ -2,13 +2,12 @@ from game.gui.objects import Rectangle
 from game.gui.objects import Text
 from useful_utility.algebra import Vector
 import pygame
-import os
 from game.gui import globals
 
 
 class Button(Rectangle):
     def __init__(self, position, width, font_size, color, text, margin_top_bottom,
-                 text_color = Vector([0, 0, 0]), hover_color = Vector([125, 121, 242])):
+                 text_color=Vector([0, 0, 0]), hover_color=globals.HOVER_COLOR):
         super().__init__(position, width, font_size, color)
 
         self._text = Text(Vector([position[0], position[1]]), text_color, text, font_size)

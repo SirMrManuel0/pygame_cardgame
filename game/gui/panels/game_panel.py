@@ -1,8 +1,5 @@
 from game.gui.panels import Panel
-from game.gui.objects import Rectangle
-from game.gui.objects import Text
 from game.gui.objects import Button
-from game.gui.objects import Circle
 from game.gui.objects import Ellipse
 from game.gui.objects import Card
 from useful_utility.algebra import Vector
@@ -20,11 +17,20 @@ class GamePanel(Panel):
 
         # self.add_object(a)
 
+        second_light: Ellipse = Ellipse(
+            self._middlePoint,
+            460,
+            310,
+            globals.DIFFUSED_LIGHT
+        )
+        second_light.set_position_from_center(self._middlePoint)
+        self.add_object(second_light)
+
         light_ellipse_in_the_middle_of_the_screen_that_lays_below_the_cards = Ellipse(
             self._middlePoint,
             420,
             270,
-            Vector([248, 244, 228])
+            globals.COLOR_OF_LIGHT
         )
         light_ellipse_in_the_middle_of_the_screen_that_lays_below_the_cards.set_position_from_center(self._middlePoint)
 
@@ -41,7 +47,7 @@ class GamePanel(Panel):
         start_button = Button(
             Vector([0, 0]),
             250, 40,
-            Vector([62, 76, 84]),
+            globals.BACKGROUND_COLOR,
             "Play!",
             40,
             text_color=Vector([255, 255, 255])
