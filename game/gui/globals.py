@@ -4,6 +4,8 @@ from useful_utility.algebra import Vector
 PHI: float = 1.618033988749895
 SIZE: tuple = (700 * PHI, 700)
 
+FPS: int = 60
+
 BACKGROUND_COLOR: Vector = Vector([62, 76, 84])
 BRIGHT_COLOR: Vector = Vector([248, 244, 228])
 HOVER_COLOR: Vector = Vector([125, 121, 242])
