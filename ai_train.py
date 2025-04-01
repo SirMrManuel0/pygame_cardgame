@@ -6,41 +6,49 @@ from game import get_path_resource, rnd
 from game.enemies import train, Difficulties
 from game.enemies import rewards_color, loss_color, entropy_color
 from colorama import Style
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("loops_number", nargs="?", type=int, default=1, help="How often should the training run? ("
+                                                                         "default=1)")
+args = parser.parse_args()
+loops_number: int = args.loops_number
 
 min_player = 4
 max_player = 4
 min_cards = 2
 max_cards = 5
 max_rounds = 100
-episodes = 50_000
+episodes = 10
 difficulty = Difficulties.EASY
 path = ("ai", "trainings_data", "Easy")
 
-for players in range(min_player, max_player + 1):
-    for cards in range(min_cards, max_cards + 1):
+for _ in range(loops_number):
+    for players in range(min_player, max_player + 1):
+        for cards in range(min_cards, max_cards + 1):
 
-        avg_reward, std_reward, moving_avg_reward, avg_loss, avg_entropy, avg_rounds, std_rounds = train(
-            Difficulties.EASY,
-            cards=cards,
-            players=players,
-            episodes=episodes,
-            max_rounds=max_rounds
-        )
+            avg_reward, std_reward, moving_avg_reward, avg_loss, avg_entropy, avg_rounds, std_rounds = train(
+                Difficulties.EASY,
+                cards=cards,
+                players=players,
+                episodes=episodes,
+                max_rounds=max_rounds
+            )
 
-        data: dict = dict()
-        with open(get_path_resource(*path), "r", encoding="utf-8") as js:
-            data = json.load(js)
+            data: dict = dict()
+            with open(get_path_resource(*path), "r", encoding="utf-8") as js:
+                data = json.load(js)
 
-        data.setdefault("average_rewards", {}).setdefault(f"{players}p", {}).setdefault(f"{cards}c", []).append(avg_reward)
-        data.setdefault("std_rewards", {}).setdefault(f"{players}p", {}).setdefault(f"{cards}c", []).append(std_reward)
-        data.setdefault("moving_avg_rewards", {}).setdefault(f"{players}p", {}).setdefault(f"{cards}c", []).append(moving_avg_reward)
-        data.setdefault("avg_losses", {}).setdefault(f"{players}p", {}).setdefault(f"{cards}c", []).append(avg_loss)
-        data.setdefault("avg_entropies", {}).setdefault(f"{players}p", {}).setdefault(f"{cards}c", []).append(avg_entropy)
-        data.setdefault("avg_rounds", {}).setdefault(f"{players}p", {}).setdefault(f"{cards}c", []).append(avg_rounds)
-        data.setdefault("std_rounds", {}).setdefault(f"{players}p", {}).setdefault(f"{cards}c", []).append(std_rounds)
+            data.setdefault("average_rewards", {}).setdefault(f"{players}p", {}).setdefault(f"{cards}c", []).append(avg_reward)
+            data.setdefault("std_rewards", {}).setdefault(f"{players}p", {}).setdefault(f"{cards}c", []).append(std_reward)
+            data.setdefault("moving_avg_rewards", {}).setdefault(f"{players}p", {}).setdefault(f"{cards}c", []).append(moving_avg_reward)
+            data.setdefault("avg_losses", {}).setdefault(f"{players}p", {}).setdefault(f"{cards}c", []).append(avg_loss)
+            data.setdefault("avg_entropies", {}).setdefault(f"{players}p", {}).setdefault(f"{cards}c", []).append(avg_entropy)
+            data.setdefault("avg_rounds", {}).setdefault(f"{players}p", {}).setdefault(f"{cards}c", []).append(avg_rounds)
+            data.setdefault("std_rounds", {}).setdefault(f"{players}p", {}).setdefault(f"{cards}c", []).append(std_rounds)
 
-        with open(get_path_resource(*path), "w", encoding="utf-8") as js:
-            json.dump(data, js, indent=4)
+            with open(get_path_resource(*path), "w", encoding="utf-8") as js:
+                json.dump(data, js, indent=4)
 
 print()
 
