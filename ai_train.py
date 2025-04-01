@@ -19,7 +19,7 @@ max_player = 4
 min_cards = 2
 max_cards = 5
 max_rounds = 100
-episodes = 10
+episodes = 3_000
 difficulty = Difficulties.EASY
 path = ("ai", "trainings_data", "Easy")
 

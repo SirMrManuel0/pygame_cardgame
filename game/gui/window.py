@@ -90,14 +90,13 @@ class Window:
                 pygame.mouse.set_visible(True)
 
             light: list = list(gui.globals.BRIGHT_COLOR.get_data())
+            light.append(10)
 
             for i in range(20):
-                light.append(10)
                 radius: float = 30 + i
                 circle = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
                 pygame.draw.circle(circle, light, (radius, radius), radius)
                 self._screen.blit(circle, (pygame.mouse.get_pos()[0] - radius, pygame.mouse.get_pos()[1] - radius))
-                light.pop()
 
             # run loop
             pygame.display.flip()
