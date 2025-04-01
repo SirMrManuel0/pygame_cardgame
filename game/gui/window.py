@@ -14,7 +14,7 @@ class Window:
         self._title = title
         self._clock = pygame.time.Clock()
         self._screen = pygame.display.set_mode(self._dimension.get_dimensions(), pygame.SRCALPHA)
-        self._allPanels = [HomePanel(), GamePanel(), RulesPanel()]
+        self._allPanels = [HomePanel(), PreGamePanel(), RulesPanel()]
         self._panel = self._allPanels[0]
         self._cursorImg = pygame.image.load(game.get_path_resource("cursor", "Cursor"))
         self._cursorImg = pygame.transform.scale(self._cursorImg, (22, 22))
