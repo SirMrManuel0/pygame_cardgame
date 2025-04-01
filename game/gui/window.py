@@ -72,9 +72,6 @@ class Window:
                         func()
 
             self._screen.fill(gui.globals.BACKGROUND_COLOR.get_data())
-            light: list = list(gui.globals.COLOR_OF_LIGHT.get_data())
-            light.append(0)
-            pygame.draw.circle(self._screen, light, pygame.mouse.get_pos(), 30)
 
             oneIsHovered = False
             for object_ in self._panel:
@@ -92,10 +89,19 @@ class Window:
             else:
                 pygame.mouse.set_visible(True)
 
+            light: list = list(gui.globals.BRIGHT_COLOR.get_data())
+            light.append(10)
+
+            for i in range(20):
+                radius: float = 30 + i
+                circle = pygame.Surface((radius * 2, radius * 2), pygame.SRCALPHA)
+                pygame.draw.circle(circle, light, (radius, radius), radius)
+                self._screen.blit(circle, (pygame.mouse.get_pos()[0] - radius, pygame.mouse.get_pos()[1] - radius))
+
             # run loop
             pygame.display.flip()
 
-            self._clock.tick(60)
+            self._clock.tick(gui.globals.FPS)
 
         pygame.quit()
 

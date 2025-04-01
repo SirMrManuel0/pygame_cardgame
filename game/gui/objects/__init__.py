@@ -5,6 +5,8 @@ from game.gui.objects.button import Button
 from game.gui.objects.card import Card
 from game.gui.objects.circle import Circle
 from game.gui.objects.ellipse import Ellipse
+from game.gui.objects.lighting_ellipse import LightingEllipse
+from game.gui.objects.lighting_circle import LightingCircle
 
 __all__ = [
     "BaseObject",
@@ -13,5 +15,7 @@ __all__ = [
     "Button",
     "Card",
     "Circle",
-    "Ellipse"
+    "Ellipse",
+    "LightingEllipse",
+    "LightingCircle"
 ]
