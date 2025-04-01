@@ -17,3 +17,4 @@ class Rectangle(BaseObject):
                         self._size[0],
                         self._size[1])
         )
+

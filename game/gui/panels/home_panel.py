@@ -62,3 +62,4 @@ class HomePanel(Panel):
 
         text = Text(Vector([10, globals.SIZE[1] - 20]), Vector([255, 255, 255]), "Ein Spiel von : Tarik, Louis & Vito", 20)
         self.add_object(text)
+        

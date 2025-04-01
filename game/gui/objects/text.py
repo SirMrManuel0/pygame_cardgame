@@ -11,7 +11,7 @@ class Text(BaseObject):
         self._text = self._font.render(text, True, color.get_data())
         self._textRect = self._text.get_rect()
         self._textRect.center = (self._position[0] + self._text.get_width() / 2, self._position[1] + self._text.get_height() / 2)
-
+        
     def center_absolute_x(self):
         self._textRect.center = (globals.SIZE[0] / 2, self._position[1] + self._text.get_height() / 2)
 

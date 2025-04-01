@@ -28,3 +28,13 @@ class BaseObject:
 
     def event(self, event):
         ...
+
+    def update(self):
+        ...
+
+    def clickListener(self):
+        for i in self._clickListener:
+            i()
+
+    def addEventListener(self, func):
+        self._clickListener.append(func)
