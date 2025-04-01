@@ -14,7 +14,7 @@ class Window:
         self._title = title
         self._clock = pygame.time.Clock()
         self._screen = pygame.display.set_mode(self._dimension.get_dimensions(), pygame.SRCALPHA)
-        self._allPanels = [HomePanel(), GamePanel(), RulesPanel()]
+        self._allPanels = [HomePanel(), PreGamePanel(), RulesPanel()]
         self._panel = self._allPanels[0]
         self._cursorImg = pygame.image.load(game.get_path_resource("cursor", "Cursor"))
         self._cursorImg = pygame.transform.scale(self._cursorImg, (22, 22))
@@ -71,8 +71,10 @@ class Window:
                     for func in self._events[event.type]:
                         func()
 
-            self._screen.fill((62,76,84))
-            pygame.draw.circle(self._screen, [248, 244, 228, 255], pygame.mouse.get_pos(), 30)
+            self._screen.fill(gui.globals.BACKGROUND_COLOR.get_data())
+            light: list = list(gui.globals.COLOR_OF_LIGHT.get_data())
+            light.append(0)
+            pygame.draw.circle(self._screen, light, pygame.mouse.get_pos(), 30)
 
             oneIsHovered = False
             for object_ in self._panel:
