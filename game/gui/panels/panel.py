@@ -20,6 +20,9 @@ class Panel:
         for i in self._objekte:
             i.update()
 
+    def update_animation(self, dt):
+        ...
+
     def draw(self, screen):
         for i in self._objekte:
             i.draw(screen)

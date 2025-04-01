@@ -11,6 +11,9 @@ from game.gui import globals
 class Card(BaseObject):
     def __init__(self, position, name, scale_size, rotation=0):
         super().__init__(position, Vector([0, 0, 0]))
+        self._rotation = rotation
+        self._name = name
+        self._scale_size = scale_size
         self._img = pygame.image.load("./resources/cards/" + name)
         self._img = pygame.transform.scale(self._img, (
             self._img.get_rect().size[0] * scale_size, self._img.get_rect().size[1] * scale_size)
@@ -27,3 +30,15 @@ class Card(BaseObject):
 
     def get_size(self):
         return self._size
+
+    def set_angle(self, angle):
+        self._img = pygame.image.load("./resources/cards/" + self._name)
+        self._img = pygame.transform.scale(self._img, (
+            self._img.get_rect().size[0] * self._scale_size, self._img.get_rect().size[1] * self._scale_size)
+        )
+        center = [*self._img.get_rect().center]
+        self._img = pygame.transform.rotate(self._img, self._rotation + angle)
+
+
+        self._size = Vector([self._img.get_rect().size[0], self._img.get_rect().size[1]])
+        self.set_position_from_center(Vector(center))

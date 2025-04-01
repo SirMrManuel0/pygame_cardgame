@@ -1,5 +1,8 @@
+from typing import override
+
 from useful_utility.algebra import Vector
 
+from game.gui.animation.animation_handler import AnimationHandler
 from game.gui.panels import Panel
 from game.gui.objects import Button
 from game.gui.objects import Ellipse
@@ -199,6 +202,30 @@ class PreGamePanel(Panel):
         self.set_player_card_location()
         self.update_cards()
 
+        #self._c1da = AnimationHandler(
+        #    Vector(dimension=2),
+        #    Vector([400, 400]),
+        #    globals.EASE_IN_OUT,
+        #    1,
+        #    0,
+        #    360
+        #)
+        #self._c1da.start()
+
+        #self._c1d = Card(
+        #    Vector(dimension=2),
+        #    "Karte-00.png",
+        #    0.4
+        #)
+        #self.add_object(self._c1d)
+
+    @override
+    def update_animation(self, dt):
+        ...
+        #self._c1da.update(dt)
+        #self._c1d.set_angle(self._c1da.get_current_animation_rotation())
+        #self._c1d.set_position_from_center(self._c1da.get_current_animation_step())
+
     def set_player_cards(self):
         self._pos1: list = list()
         self._pos2: list = list()
@@ -325,7 +352,29 @@ class PreGamePanel(Panel):
         ...
 
     def increase_cards(self):
-        ...
+        self._cards += 1
+        self._cards_display.change_text(str(self._cards))
+        if self._cards == 3:
+            self._objekte.append(self._minus_cards)
+        if self._cards == 5:
+            self._objekte.remove(self._plus_cards)
+            self._plus_cards._hovered = False
+
+        self.set_player_cards()
+        self.set_player_card_location()
+        self.update_cards()
+
 
     def decrease_cards(self):
-        ...
+        self._cards -= 1
+        self._cards_display.change_text(str(self._cards))
+
+        if self._cards == 2:
+            self._objekte.remove(self._minus_cards)
+            self._minus_cards._hovered = False
+        if self._cards == 4:
+            self._objekte.append(self._plus_cards)
+
+        self.set_player_cards()
+        self.set_player_card_location()
+        self.update_cards()

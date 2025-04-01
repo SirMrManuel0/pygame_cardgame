@@ -52,14 +52,16 @@ class Window:
         self._panel.draw(self._screen)
         assertion.assert_is_not_none(self._panel, ArgumentError, code=ArgumentCodes.NONE)
 
-    def update(self):
+    def update(self, dt):
         self._panel.update()
+        self._panel.update_animation(dt)
 
     def event(self, event):
         self._panel.event(event)
 
     def run(self):
         while self._alive:
+            dt = self._clock.tick(gui.globals.FPS)
 
             for event in pygame.event.get():
                 self.event(event)
@@ -80,7 +82,7 @@ class Window:
                         oneIsHovered = True
 
             self.draw()
-            self.update()
+            self.update(dt / 1000)
 
             if oneIsHovered:
                 self._cursorImgRect.center = pygame.mouse.get_pos()
@@ -100,8 +102,6 @@ class Window:
 
             # run loop
             pygame.display.flip()
-
-            self._clock.tick(gui.globals.FPS)
 
         pygame.quit()
 
