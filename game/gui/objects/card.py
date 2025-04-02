@@ -1,6 +1,6 @@
 from game.gui.objects import Rectangle
 from game.gui.objects import Text
-from useful_utility.algebra import Vector, Matrix
+from pylix.algebra import Vector, Matrix
 from game.gui.objects import BaseObject
 import pygame
 

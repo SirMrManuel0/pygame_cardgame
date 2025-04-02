@@ -1,6 +1,6 @@
 from typing import override
 
-from useful_utility.algebra import Vector
+from pylix.algebra import Vector
 
 from game.gui.animation.animation_handler import AnimationHandler
 from game.gui.panels import Panel

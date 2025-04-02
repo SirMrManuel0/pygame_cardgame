@@ -1,5 +1,5 @@
 import numpy as np
-from useful_utility.algebra import Vector
+from pylix.algebra import Vector
 
 PHI: float = 1.618033988749895
 SIZE: tuple = (700 * PHI, 700)

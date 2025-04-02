@@ -1,4 +1,4 @@
-from useful_utility.algebra import Vector
+from pylix.algebra import Vector
 
 class AnimationHandler:
     def __init__(self, start_position, end_position, transition_function: Vector, duration, delay,
