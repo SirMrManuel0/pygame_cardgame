@@ -1,4 +1,4 @@
-from useful_utility.algebra import Vector
+from pylix.algebra import Vector
 
 
 class BaseObject:

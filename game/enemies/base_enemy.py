@@ -5,7 +5,7 @@ from random import choice
 import torch
 from enum import Enum
 
-from useful_utility.algebra import Matrix, Vector
+from pylix.algebra import Matrix, Vector
 
 from game import Player, get_path_resource
 from game.deck import GameDeck, Card

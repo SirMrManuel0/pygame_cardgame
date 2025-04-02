@@ -1,5 +1,5 @@
 from game.gui.objects import BaseObject
-from useful_utility.algebra import Vector
+from pylix.algebra import Vector
 import pygame
 
 

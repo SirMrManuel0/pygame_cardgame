@@ -1,4 +1,4 @@
-from useful_utility.algebra import Vector, Matrix
+from pylix.algebra import Vector, Matrix
 
 from game import get_path_resource, Player
 from game.deck import Shuffle

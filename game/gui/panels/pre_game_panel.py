@@ -1,5 +1,8 @@
-from useful_utility.algebra import Vector
+from typing import override
 
+from pylix.algebra import Vector
+
+from game.gui.animation.animation_handler import AnimationHandler
 from game.gui.panels import Panel
 from game.gui.objects import Button
 from game.gui.objects import Ellipse
@@ -195,15 +198,77 @@ class PreGamePanel(Panel):
         self._pos2: list = list()
         self._pos3: list = list()
         self._pos4: list = list()
+
+        self._animation1 = list()
+        self._animation2 = list()
+        self._animation3 = list()
+        self._animation4 = list()
+
+
         self.set_player_cards()
         self.set_player_card_location()
         self.update_cards()
+
+
+        #self._c1da = AnimationHandler(
+        #    Vector(dimension=2),
+        #    Vector([400, 400]),
+        #    globals.EASE_IN_OUT,
+        #    1,
+        #    0,
+        #    360
+        #)
+        #self._c1da.start()
+
+        #self._c1d = Card(
+        #    Vector(dimension=2),
+        #    "Karte-00.png",
+        #    0.4
+        #)
+        #self.add_object(self._c1d)
+
+    @override
+    def update_animation(self, dt):
+        for i, a in enumerate(self._animation1):
+            if a.update(dt) == -1:
+                continue
+
+            self._pos1[i].set_position_from_center(a.get_current_animation_step())
+            self._pos1[i].set_angle(a.get_current_animation_rotation())
+
+
+        for i, a in enumerate(self._animation2):
+            if a.update(dt) == -1:
+                continue
+
+            self._pos2[i].set_position_from_center(a.get_current_animation_step())
+            self._pos2[i].set_angle(a.get_current_animation_rotation())
+
+        for i, a in enumerate(self._animation3):
+            if a.update(dt) == -1:
+                continue
+
+            self._pos3[i].set_position_from_center(a.get_current_animation_step())
+            self._pos3[i].set_angle(a.get_current_animation_rotation())
+
+        for i, a in enumerate(self._animation4):
+            if a.update(dt) == -1:
+                continue
+
+            self._pos4[i].set_position_from_center(a.get_current_animation_step())
+            self._pos4[i].set_angle(a.get_current_animation_rotation())
 
     def set_player_cards(self):
         self._pos1: list = list()
         self._pos2: list = list()
         self._pos3: list = list()
         self._pos4: list = list()
+
+        self._animation1 = list()
+        self._animation2 = list()
+        self._animation3 = list()
+        self._animation4 = list()
+
         for _ in range(self._cards):
             self._pos1.append(Card(Vector(dimension=2), "Karte-Rueck.png", self._card_scale_player))
             self._pos2.append(Card(Vector(dimension=2), "Karte-Rueck.png", self._card_scale_player))
@@ -216,6 +281,7 @@ class PreGamePanel(Panel):
         temp: Card = Card(Vector(dimension=2), "Karte-Rueck.png", self._card_scale_player)
         #                                   Summe der Kartenbreiten          Summe der Abstände zwischen den Karten
         card_width = temp.get_size()[0]
+        card_height = temp.get_size()[1]
         gap_width = .2 * temp.get_size()[0]
         total_card_width: float = temp.get_size()[0] * self._cards + gap_width * (self._cards - 1)
         del temp
@@ -225,29 +291,73 @@ class PreGamePanel(Panel):
         if len(self._pos1) > 0:
             offset_x: float = total_card_width / 2 - card_width / 2
             offset_y: float = offset_non_changing
-            for card in self._pos1:
-                card.set_position_from_center(self._middle_point_pos1 - Vector([offset_x, offset_y]))
+            for i,card in enumerate(self._pos1):
+                card.set_position_from_center(self._middle_point_pos1 - Vector([offset_x, offset_y]) + Vector([0, card_height / 2]))
+
+                self._animation1.append(AnimationHandler(
+                    self._middle_point_pos1 - Vector([offset_x, offset_y]) + Vector([0, card_height / 2]),
+                    self._middle_point_pos1 - Vector([offset_x, offset_y]),
+                    globals.EASE_IN_OUT,
+                    0.9,
+                    0
+                ))
+                self._animation1[-1].start()
+
                 offset_x -= card_width + gap_width
+
+
+
 
         if len(self._pos2) > 0:
             offset_x: float = total_card_width / 2 - card_width / 2
             offset_y: float = offset_non_changing
-            for card in self._pos2:
-                card.set_position_from_center(self._middle_point_pos2 - Vector([offset_x, offset_y]))
+            for i, card in enumerate(self._pos2):
+                card.set_position_from_center(self._middle_point_pos2 - Vector([offset_x, offset_y]) - Vector([0, card_height / 2]))
+
+                self._animation2.append(AnimationHandler(
+                    self._middle_point_pos2 - Vector([offset_x, offset_y]) - Vector([0, card_height / 2]),
+                    self._middle_point_pos2 - Vector([offset_x, offset_y]),
+                    globals.EASE_IN_OUT,
+                    0.9,
+                    0
+                ))
+                self._animation2[-1].start()
+
                 offset_x -= card_width + gap_width
 
         if len(self._pos3) > 0:
             offset_x: float = offset_non_changing
             offset_y: float = total_card_width / 2 - card_width / 2
-            for card in self._pos3:
-                card.set_position_from_center(self._middle_point_pos3 - Vector([offset_x, offset_y]))
+            for i, card in enumerate(self._pos3):
+                card.set_position_from_center(self._middle_point_pos3 + Vector([offset_x, offset_y]) + Vector([card_height / 2, 0]))
+
+                self._animation3.append(AnimationHandler(
+                    self._middle_point_pos3 + Vector([offset_x, offset_y]) + Vector([card_height / 2, 0]),
+                    self._middle_point_pos3 + Vector([offset_x, offset_y]),
+                    globals.EASE_IN_OUT,
+                    0.9,
+                    0
+                ))
+                self._animation3[-1].start()
+
                 offset_y -= card_width + gap_width
+
 
         if len(self._pos4) > 0:
             offset_x: float = offset_non_changing
             offset_y: float = total_card_width / 2 - card_width / 2
-            for card in self._pos4:
-                card.set_position_from_center(self._middle_point_pos4 - Vector([offset_x, offset_y]))
+            for i, card in enumerate(self._pos4):
+                card.set_position_from_center(self._middle_point_pos4 - Vector([offset_x, offset_y]) - Vector([card_height / 2, 0]),)
+
+                self._animation4.append(AnimationHandler(
+                    self._middle_point_pos4 - Vector([offset_x, offset_y]) - Vector([card_height / 2, 0]),
+                    self._middle_point_pos4 - Vector([offset_x, offset_y]),
+                    globals.EASE_IN_OUT,
+                    0.9,
+                    0
+                ))
+                self._animation4[-1].start()
+
                 offset_y -= card_width + gap_width
 
     def update_cards(self):
@@ -325,7 +435,29 @@ class PreGamePanel(Panel):
         ...
 
     def increase_cards(self):
-        ...
+        self._cards += 1
+        self._cards_display.change_text(str(self._cards))
+        if self._cards == 3:
+            self._objekte.append(self._minus_cards)
+        if self._cards == 5:
+            self._objekte.remove(self._plus_cards)
+            self._plus_cards._hovered = False
+
+        self.set_player_cards()
+        self.set_player_card_location()
+        self.update_cards()
+
 
     def decrease_cards(self):
-        ...
+        self._cards -= 1
+        self._cards_display.change_text(str(self._cards))
+
+        if self._cards == 2:
+            self._objekte.remove(self._minus_cards)
+            self._minus_cards._hovered = False
+        if self._cards == 4:
+            self._objekte.append(self._plus_cards)
+
+        self.set_player_cards()
+        self.set_player_card_location()
+        self.update_cards()
