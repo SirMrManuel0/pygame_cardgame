@@ -54,6 +54,9 @@ class Button(Rectangle):
         else:
             self.set_color(self._color_)
 
+    def change_color(self, color):
+        self._color_ = color
+
     def is_hovered(self):
         return self._hovered
 

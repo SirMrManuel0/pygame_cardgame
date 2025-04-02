@@ -2,7 +2,7 @@ from game.gui.panels import Panel
 from game.gui.objects import Rectangle
 from game.gui.objects import Text
 from game.gui.objects import Button
-from useful_utility.algebra import Vector
+from pylix.algebra import Vector
 from game.gui import globals
 
 class HomePanel(Panel):
@@ -21,14 +21,15 @@ class HomePanel(Panel):
 
         self.add_object(title)
 
-        btn = Button(
+        self.start_btn = Button(
             Vector([globals.SIZE[0] / 2 - 200, 250]),
             400, 30,
             Vector([250, 241, 230]),
             "Play!",
             20
         )
-        self.add_object(btn)
+        self.add_object(self.start_btn)
+
 
         btn2 = Button(
             Vector([globals.SIZE[0] / 2 - 200, 330]),

@@ -2,7 +2,7 @@ from game.gui.panels import Panel
 from game.gui.objects import Rectangle
 from game.gui.objects import Text
 from game.gui.objects import Button
-from useful_utility.algebra import Vector
+from pylix.algebra import Vector
 from game.gui import globals
 
 class RulesPanel(Panel):
