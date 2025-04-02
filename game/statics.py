@@ -3,8 +3,8 @@ import json
 import numpy as np
 import darkdetect
 
-from game.errors import ArgumentError, ArgumentCodes, assertion
-from game.gui import GuiHandler
+from game.errors.base_errors import ArgumentError, ArgumentCodes
+import game.errors.assertion as assertion
 
 
 def get_path_abs(relative_path: str) -> str:
@@ -49,9 +49,6 @@ def get_path_resource(*way) -> str:
 
 def rnd(x) -> float:
     return float(np.round(x, 8))
-
-def run() -> None:
-    GuiHandler()
 
 def is_dark() -> bool:
     return darkdetect.isDark()

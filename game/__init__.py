@@ -5,6 +5,7 @@ import game.event_handler
 from game.statics import *
 from game.logic import CaboLogic
 from game.player import Player
+from game.run import run
 
 __all__ = [
     "get_path_abs",

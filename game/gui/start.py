@@ -1,7 +1,5 @@
 import pygame
 
-import game.gui
-from game.logic import CaboLogic
 import game.gui as gui
 from game.gui import globals
 

@@ -7,7 +7,7 @@ from enum import Enum
 
 from pylix.algebra import Matrix, Vector
 
-from game import Player, get_path_resource
+from game.player import Player
 from game.deck import GameDeck, Card
 from game.enemies.policy_nn import PolicyNN
 from game.logic.logic import DrawOptions

@@ -9,7 +9,7 @@ from game.gui import globals
 
 
 class Card(BaseObject):
-    def __init__(self, position, name, scale_size, rotation=0):
+    def __init__(self, position, name, scale_size, rotation=0, pos_from_center=None,identifier=None):
         super().__init__(position, Vector([0, 0, 0]))
         self._rotation = rotation
         self._name = name
@@ -21,6 +21,16 @@ class Card(BaseObject):
         self._img = pygame.transform.rotate(self._img, rotation)
 
         self._size = Vector([self._img.get_rect().size[0], self._img.get_rect().size[1]])
+        self._identifier = identifier
+
+        if pos_from_center is not None:
+            self.set_position_from_center(pos_from_center)
+
+    def get_identifier(self):
+        return self._identifier
+
+    def get_center(self) -> Vector:
+        return self._position + (.5 * self._size)
 
     def draw(self, screen):
         screen.blit(self._img, (self._position[0], self._position[1]))
@@ -30,6 +40,9 @@ class Card(BaseObject):
 
     def get_size(self):
         return self._size
+
+    def get_name(self) -> str:
+        return self._name
 
     def set_angle(self, angle):
         self._img = pygame.image.load("./resources/cards/" + self._name)

@@ -165,3 +165,6 @@ class CaboLogic:
 
     def __iter__(self):
         return iter(self._players)
+
+    def __getitem__(self, item):
+        return self._players[item]

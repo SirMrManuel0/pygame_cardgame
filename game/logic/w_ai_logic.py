@@ -1,21 +1,18 @@
-import random
-
 import torch
-from useful_utility.algebra import Vector
+from pylix.algebra import Vector
 
-from game import Player
+from game.player import Player
 from game.enemies.static import create_enemy
 from game.enemies.policy_nn import PolicyNN
 from game.enemies.base_enemy import State, Phase, BaseEnemy, Difficulties
 from game.errors import assertion, ArgumentCodes, ArgumentError
-from game.event_handler import LogicEvents
-from game.logic import CaboLogic
+from game.logic.logic import CaboLogic
 from game.logic.logic import DrawOptions
 
 
 class LogicWAI(CaboLogic):
     def __init__(self, player_count: int = 4, start_card_count: int = 4, enemy_count: int = 1,
-                 difficulty: Difficulties = Difficulties.MEDIUM):
+                 difficulty: Difficulties = Difficulties.EASY):
         assertion.assert_below(player_count + enemy_count, 5, ArgumentError, code=ArgumentCodes.TOO_BIG)
         assertion.assert_above(player_count + enemy_count, 0, ArgumentError, code=ArgumentCodes.TOO_SMALL)
         l_count: int = player_count
@@ -27,7 +24,6 @@ class LogicWAI(CaboLogic):
         self._players = [Player(self._game_deck, cards=start_card_count) for i in range(player_count)]
         self._players += [create_enemy(difficulty, player_count + enemy_count - 1, self._game_deck, start_card_count)
                           for i in range(enemy_count)]
-        self._players = random.sample(self._players, len(self._players))
         for i, player in enumerate(self._players):
             player.set_pid(i)
             if isinstance(player, BaseEnemy):
