@@ -26,7 +26,7 @@ class Card(BaseObject):
         screen.blit(self._img, (self._position[0], self._position[1]))
 
     def set_position_from_center(self, pos: Vector):
-        self._position = pos - .5 * self._size
+        self._position = pos - (.5 * self._size)
 
     def get_size(self):
         return self._size
@@ -39,6 +39,5 @@ class Card(BaseObject):
         center = [*self._img.get_rect().center]
         self._img = pygame.transform.rotate(self._img, self._rotation + angle)
 
-
         self._size = Vector([self._img.get_rect().size[0], self._img.get_rect().size[1]])
-        self.set_position_from_center(Vector(center))
+        self.set_position_from_center(self._position + Vector(center))

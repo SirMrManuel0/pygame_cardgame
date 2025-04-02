@@ -1,13 +1,14 @@
 from useful_utility.algebra import Vector
 
 class AnimationHandler:
-    def __init__(self, start_position, end_position, transition_function: Vector, duration,
+    def __init__(self, start_position, end_position, transition_function: Vector, duration, delay,
                  start_rotation = 0, end_rotation = 0, control_angle_1 = 0, control_angle_2 = 0):
         self._start_position = start_position
         self._end_position = end_position
         self._transition_function = transition_function # transition_function ist ein 4D Vector
         self._duration = duration
-        self._t = 0
+        self._delay = delay
+        self._t = -self._delay
         #                   HasStarted, isDone
         self._animation_state = [False, False]
 
@@ -24,12 +25,18 @@ class AnimationHandler:
                 + (t ** 3) * Vector(dimension=2, default_value=1))
 
     def get_current_animation_step(self):
+        if self._t < 0:
+            return self._start_position
+
         progress = self.cubic_bezier()
         pos = self._start_position + (progress[1] * (self._end_position - self._start_position))
 
         return pos
 
     def get_current_animation_rotation(self):
+        if self._t < 0:
+            return self._start_rotation
+
         progress = self.cubic_bezier()
         progress = self._start_rotation + (progress[1] * (self._end_rotation - self._start_rotation))
         return progress
@@ -40,6 +47,8 @@ class AnimationHandler:
 
         if self._t > self._duration:
             self._animation_state[True] = True
+
+            return -1
 
     def start(self):
         self._animation_state[False] = True

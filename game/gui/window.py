@@ -14,30 +14,11 @@ class Window:
         self._title = title
         self._clock = pygame.time.Clock()
         self._screen = pygame.display.set_mode(self._dimension.get_dimensions(), pygame.SRCALPHA)
-        self._allPanels = [HomePanel(), PreGamePanel(), RulesPanel()]
-        self._panel = self._allPanels[0]
+        self._allPanels = [HomePanel, PreGamePanel, RulesPanel]
+        self._panel = self._allPanels[1]()
         self._cursorImg = pygame.image.load(game.get_path_resource("cursor", "Cursor"))
         self._cursorImg = pygame.transform.scale(self._cursorImg, (22, 22))
         self._cursorImgRect = self._cursorImg.get_rect()
-
-        def back_to_home_panel():
-            self._panel = self._allPanels[0]
-
-        def home_panel_button1_function_listener():
-            self._panel = self._allPanels[1]
-
-        def home_panel_button3_function_listener():
-            self._panel = self._allPanels[2]
-
-        def home_panel_button4_function_listener():
-            webbrowser.open('https://github.com/SirMrManuel0/pygame_cardgame')
-
-        self._allPanels[0].get_object(1).add_event_listener(home_panel_button1_function_listener)
-        self._allPanels[0].get_object(2).add_event_listener(home_panel_button1_function_listener)
-        self._allPanels[0].get_object(4).add_event_listener(home_panel_button4_function_listener)
-        self._allPanels[0].get_object(3).add_event_listener(home_panel_button3_function_listener)
-        self._allPanels[1].get_object(0).add_event_listener(back_to_home_panel)
-        self._allPanels[2].get_object(0).add_event_listener(back_to_home_panel)
 
         pygame.display.set_caption(self._title)
         pygame.display.set_icon(pygame.image.load(game.get_path_resource("icons", "purple")))
