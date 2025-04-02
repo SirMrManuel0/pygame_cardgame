@@ -15,7 +15,6 @@ from game.gui.objects import Text
 class PreGamePanel(Panel):
     def __init__(self):
         super().__init__()
-        self.gameLogic = CaboLogic()
         self._card_scale_deck: float = .2
         self._card_scale_player: float = .19
         # self.add_object(Rectangle(Vector([10, 10]), 100, 100, Vector([100, 10, 10])))
@@ -25,6 +24,7 @@ class PreGamePanel(Panel):
 
         # self.add_object(a)
 
+        #                   2        3      4
         self._ai_enable = [False, False, False]
 
         second_light: Ellipse = Ellipse(
@@ -93,7 +93,6 @@ class PreGamePanel(Panel):
             "AI",
             20
         )
-
 
         self._ai_pos2_button = Button(
             Vector(dimension=2),
@@ -225,10 +224,7 @@ class PreGamePanel(Panel):
         self._animation3 = list()
         self._animation4 = list()
 
-
         self.set_player_cards()
-
-
         self.set_player_card_location()
         self.update_cards()
 
@@ -285,7 +281,6 @@ class PreGamePanel(Panel):
                 continue
             self._pos1[i].set_position_from_center(a.get_current_animation_step())
             self._pos1[i].set_angle(a.get_current_animation_rotation())
-
 
         for i, a in enumerate(self._animation2):
             if a.update(dt) == -1:
@@ -368,11 +363,9 @@ class PreGamePanel(Panel):
 
             self._animation4[1].on_finished(self.add_btn4)
 
-
     def add_btn1(self):
         self._objekte.append(self._minus_pos3_button)
         self._objekte.append(self._ai_pos3_button)
-
 
     def add_btn2(self):
         self._objekte.append(self._minus_pos4_button)
@@ -383,8 +376,6 @@ class PreGamePanel(Panel):
         self._animation2 = list()
         self._animation3 = list()
         self._animation4 = list()
-
-
         temp: Card = Card(Vector(dimension=2), "Karte-Rueck.png", self._card_scale_player)
         #                                   Summe der Kartenbreiten          Summe der Abstände zwischen den Karten
         card_width = temp.get_size()[0]
@@ -679,7 +670,6 @@ class PreGamePanel(Panel):
             offset_x_inc: float = total_card_width_inc / 2 - card_width / 2
             offset_y_inc: float = offset_non_changing
 
-
             for i, card in enumerate(self._pos1[:-1]):
                 card.set_position_from_center(self._middle_point_pos1 - Vector([offset_x_inc, offset_y_inc]))
                 self._animation1.append(AnimationHandler(
@@ -712,7 +702,6 @@ class PreGamePanel(Panel):
             offset_y: float = offset_non_changing
             offset_x_inc: float = total_card_width_inc / 2 - card_width / 2
             offset_y_inc: float = offset_non_changing
-
 
             for i, card in enumerate(self._pos2[:-1]):
                 card.set_position_from_center(self._middle_point_pos2 - Vector([offset_x_inc, offset_y_inc]))
@@ -747,7 +736,6 @@ class PreGamePanel(Panel):
             offset_x: float = offset_non_changing
             offset_y_inc: float = total_card_width_inc / 2 - card_width / 2
             offset_x_inc: float = offset_non_changing
-
 
             for i, card in enumerate(self._pos3[:-1]):
                 card.set_position_from_center(self._middle_point_pos3 - Vector([offset_x_inc, offset_y_inc]))
@@ -812,8 +800,7 @@ class PreGamePanel(Panel):
             self._animation4[-1].on_finished(self.remove_last_pos4)
             self._animation4[-1].start()
 
-
-    def set_player_cards(self): #type 0default, 1increase, 2, decrease
+    def set_player_cards(self):
         self._pos1: list = list()
         self._pos2: list = list()
         self._pos3: list = list()
@@ -859,9 +846,6 @@ class PreGamePanel(Panel):
 
                 offset_x -= card_width + gap_width
 
-
-
-
         if len(self._pos2) > 0:
             offset_x: float = total_card_width / 2 - card_width / 2
             offset_y: float = offset_non_changing
@@ -896,14 +880,11 @@ class PreGamePanel(Panel):
 
                 offset_y -= card_width + gap_width
 
-
         if len(self._pos4) > 0:
-
             offset_x: float = 0
             offset_y: float = total_card_width / 2 - card_width / 2
             for i, card in enumerate(self._pos4):
                 card.set_position_from_center(self._middle_point_pos4 - Vector([offset_x, offset_y]) - Vector([card_height / 2, 0]),)
-
 
                 self._animation4.append(AnimationHandler(
                     self._middle_point_pos4 - Vector([offset_x, offset_y]) - Vector([card_height / 2, 0]),
@@ -1011,3 +992,12 @@ class PreGamePanel(Panel):
             self._objekte.append(self._plus_cards)
 
         self.set_player_cards_decrease()
+
+    def get_for_game(self) -> tuple:
+        return (
+            self._players,
+            len([value for value in self._ai_enable if value]),
+            self._extra_player_positions,
+            self._ai_enable,
+            self._cards
+        )

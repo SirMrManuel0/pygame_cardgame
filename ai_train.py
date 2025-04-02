@@ -1,10 +1,8 @@
 import json
 
-import numpy as np
-
 from game import get_path_resource, rnd
-from game.enemies import train, Difficulties
-from game.enemies import rewards_color, loss_color, entropy_color
+from game.enemies import Difficulties
+from game.enemies.train import rewards_color, loss_color, entropy_color, train
 from colorama import Style
 import argparse
 

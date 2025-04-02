@@ -1,9 +1,12 @@
 import pygame
 import game
 import game.gui as gui
-from game.gui.panels import *
-from game.errors import *
-import webbrowser
+from game.gui.panels.home_panel import HomePanel
+from game.gui.panels.pre_game_panel import PreGamePanel
+from game.gui.panels.rules_panel import RulesPanel
+from game.gui.panels.game_panel import GamePanel
+from game.errors.base_errors import *
+import game.errors.assertion as assertion
 
 
 class Window:
@@ -20,7 +23,8 @@ class Window:
         self._panel = self._allPanels[2]()
 
     def createGamePanel(self):
-        self._panel = self._allPanels[3]()
+        player_count, ai_count, player_pos, ai_pos, cards = self._panel.get_for_game()
+        self._panel = self._allPanels[3](player_count, ai_count, player_pos, ai_pos, cards)
 
     def __init__(self, dimension, title: str):
         self._events = dict()

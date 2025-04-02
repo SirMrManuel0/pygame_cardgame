@@ -1,10 +1,9 @@
 import os
 
-import numpy as np
 import torch
 import torch.nn as nn
 
-from game import get_path_resource
+from game.statics import get_path_resource
 
 
 class PolicyNN(nn.Module):
