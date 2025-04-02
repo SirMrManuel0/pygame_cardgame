@@ -14,7 +14,7 @@ parser.add_argument("loops_number", nargs="?", type=int, default=1, help="How of
 args = parser.parse_args()
 loops_number: int = args.loops_number
 
-min_player = 4
+min_player = 2
 max_player = 4
 min_cards = 2
 max_cards = 5
