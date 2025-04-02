@@ -7,6 +7,21 @@ import webbrowser
 
 
 class Window:
+
+    def createHomePanel(self):
+        self._panel = self._allPanels[0]()
+        self._panel.start_btn.add_event_listener(self.createPreGamePanel)
+
+    def createPreGamePanel(self):
+        self._panel = self._allPanels[1]()
+        self._panel.start_button.add_event_listener(self.createGamePanel)
+
+    def createAnleitungPanel(self):
+        self._panel = self._allPanels[2]()
+
+    def createGamePanel(self):
+        self._panel = self._allPanels[3]()
+
     def __init__(self, dimension, title: str):
         self._events = dict()
         self._dimension: gui.Dimension = dimension
@@ -14,11 +29,13 @@ class Window:
         self._title = title
         self._clock = pygame.time.Clock()
         self._screen = pygame.display.set_mode(self._dimension.get_dimensions(), pygame.SRCALPHA)
-        self._allPanels = [HomePanel, PreGamePanel, RulesPanel]
-        self._panel = self._allPanels[1]()
+        self._allPanels = [HomePanel, PreGamePanel, RulesPanel, GamePanel]
+        self._panel = None
         self._cursorImg = pygame.image.load(game.get_path_resource("cursor", "Cursor"))
         self._cursorImg = pygame.transform.scale(self._cursorImg, (22, 22))
         self._cursorImgRect = self._cursorImg.get_rect()
+
+        self.createHomePanel()
 
         pygame.display.set_caption(self._title)
         pygame.display.set_icon(pygame.image.load(game.get_path_resource("icons", "purple")))

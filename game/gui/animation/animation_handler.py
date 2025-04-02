@@ -2,7 +2,7 @@ from pylix.algebra import Vector
 
 class AnimationHandler:
     def __init__(self, start_position, end_position, transition_function: Vector, duration, delay,
-                 start_rotation = 0, end_rotation = 0, control_angle_1 = 0, control_angle_2 = 0):
+                 start_rotation = 0, end_rotation = 0):
         self._start_position = start_position
         self._end_position = end_position
         self._transition_function = transition_function # transition_function ist ein 4D Vector
@@ -14,8 +14,8 @@ class AnimationHandler:
 
         self._start_rotation = start_rotation
         self._end_rotation = end_rotation
-        self._control_angle_1 = control_angle_1
-        self._control_angle_2 = control_angle_2
+
+        self._finished = list()
 
     def cubic_bezier(self):
         t = self._t / self._duration
@@ -23,6 +23,9 @@ class AnimationHandler:
                 + (3 * ((1 - t) ** 2) * t) * Vector([self._transition_function[0],self._transition_function[1]])
                 + (3 * (1 - t) * (t ** 2)) * Vector([self._transition_function[2],self._transition_function[3]])
                 + (t ** 3) * Vector(dimension=2, default_value=1))
+
+    def on_finished(self, func, *args):
+        self._finished.append([func,len(args) > 0, args])
 
     def get_current_animation_step(self):
         if self._t < 0:
@@ -48,7 +51,24 @@ class AnimationHandler:
         if self._t > self._duration:
             self._animation_state[True] = True
 
+            while len(self._finished) > 0:
+                a = self._finished.pop()
+                if a[1]:
+                    a[0](*a[2])
+                else:
+                    a[0]()
+
             return -1
 
     def start(self):
         self._animation_state[False] = True
+
+    def __del__(self):
+        while len(self._finished) > 0:
+            a = self._finished.pop()
+            if a[1]:
+                a[0](*a[2])
+            else:
+                a[0]()
+
+        # Hello

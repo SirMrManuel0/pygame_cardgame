@@ -3,7 +3,7 @@ import game
 import game.gui as gui
 from typing import Self
 from game.gui import globals
-from useful_utility.algebra import Vector
+from pylix.algebra import Vector
 
 class Panel:
     def __init__(self):
