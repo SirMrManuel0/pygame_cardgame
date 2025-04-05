@@ -5,9 +5,11 @@ from pylix.algebra import Vector
 from pylix.errors.decorator import TODO
 from typing_extensions import override
 
+from game.deck import DiscardPile, Shuffle
+from game.deck import Card as logCard
 from game.event_handler import LogicEvent, LogicEvents
 from game.gui.animation import AnimationHandler
-from game.gui.objects import Ellipse, Card, Button
+from game.gui.objects import Ellipse, Card, Button, Text
 from game.logic import CaboLogic
 from game.logic.logic import DrawOptions
 from game.logic.w_ai_logic import LogicWAI
@@ -129,6 +131,8 @@ class GamePanel(Panel):
         self._animation3 = list()
         self._animation4 = list()
 
+        self._cabo = False
+        self._cabo_caller = -1
         self._handcard: Optional[Card] = None
         self._handcard_pos: Vector = self._middlePoint + Vector([0, 100])
         self._animation_handcard: list = list()
@@ -140,22 +144,66 @@ class GamePanel(Panel):
         self._phase_2_options: list = [self._all_options[3], self._all_options[4]]
 
         self._other_ani = list()
-        self._swap_selectd = list()
+        self._swap_selected = list()
 
         self.set_player_cards()
         self.set_player_card_location()
         self.update_cards()
 
-    def phase_1(self):
+    def is_active_player_gui_ai(self) -> bool:
+        return self._order[self._active_player_logic] == 0
+
+    def phase_1(self, temp=""):
+        print("Phase 1:")
+        print(self._active_player_logic)
+        print(self.is_active_player_gui_ai())
+        print(temp)
+        if self._logic.event_handler.has_event(LogicEvents.EMPTY_DECK):
+            self._logic.event_handler.remove_event_by_kind(LogicEvents.EMPTY_DECK)
+            self._logic.restock_deck(Shuffle.DUMP)
+        if self.is_active_player_gui_ai() and self._round_counter not in [1, 2]:
+            self._ai(self._active_player_logic)
+            return
+        elif self.is_active_player_gui_ai():
+            print("Ai and in round 1, 2")
+            print(self._active_player_logic)
+            print(self._pos1)
+            print(self._pos2)
+            print(self._pos3)
+            print(self._pos4)
+            self.next_player()
+            return
+        if self._active_player_gui == self._cabo_caller:
+            self.end_game()
+            return
         if self._round_counter in [1, 2]:
             self.phase_3()
             return
         if self._round_counter == 3 and self._active_player_gui == 1:
-            self._logic.draw(self._active_player_logic, DrawOptions.GAME_DECK)
-            self.create_handcard(self._logic[self._active_player_logic].get_active_card().get_value())
-            self.phase_2()
+            self.draw_from_deck()
             return
-        self.update_options(self._phase_1_options)
+        self.update_options(self._phase_1_options[self._cabo:])
+
+    def _ai(self, id_):
+        self._logic.ai_phase1(id_)
+        self._logic.ai_phase2(id_)
+        events = self._logic.get_events()
+        if len(events) == 0:
+            self.next_player()
+            return
+
+        for event in events:
+            assert isinstance(event, LogicEvent)
+            if event.get_kind() == LogicEvents.PEEK_EFFECT:
+                self._logic.ai_phase3(id_)
+                self._logic.remove_event(event.get_eid())
+            elif event.get_kind() == LogicEvents.SPY_EFFECT:
+                self._logic.ai_phase4(id_)
+                self._logic.remove_event(event.get_eid())
+            elif event.get_kind() == LogicEvents.SWAP_EFFECT:
+                self._logic.ai_phase5(id_)
+            else:
+                self.next_player()
 
     def phase_2(self):
         self.update_options(self._phase_2_options)
@@ -186,9 +234,10 @@ class GamePanel(Panel):
             20,
             text_color=text_color,
             identifier="option",
-            pos_from_center=self._handcard_pos + Vector([-100, 130]),
+            pos_from_center=self._handcard_pos + Vector([-110, 130]),
             hover_color=hover_color
         )
+        cabo.add_event_listener(self.cabo)
         self._all_options.append(cabo)
         draw_from_deck: Button = Button(
             Vector(),
@@ -198,9 +247,10 @@ class GamePanel(Panel):
             20,
             text_color=text_color,
             identifier="option",
-            pos_from_center=Vector(),
+            pos_from_center=self._handcard_pos + Vector([0, 130]),
             hover_color=hover_color
         )
+        draw_from_deck.add_event_listener(self.draw_from_deck)
         self._all_options.append(draw_from_deck)
         draw_from_discard_pile: Button = Button(
             Vector(),
@@ -210,9 +260,10 @@ class GamePanel(Panel):
             20,
             text_color=text_color,
             identifier="option",
-            pos_from_center=Vector(),
+            pos_from_center=self._handcard_pos + Vector([110, 130]),
             hover_color=hover_color
         )
+        draw_from_discard_pile.add_event_listener(self.draw_from_discard)
         self._all_options.append(draw_from_discard_pile)
         card_to_discard: Button = Button(
             Vector(),
@@ -238,13 +289,99 @@ class GamePanel(Panel):
             pos_from_center=self._handcard_pos + Vector([100, 130]),
             hover_color=hover_color
         )
+        swap_with_self.add_event_listener(self.swap_self)
         self._all_options.append(swap_with_self)
+
+    def draw_from_deck(self):
+        self._logic.draw(self._active_player_logic, DrawOptions.GAME_DECK)
+        self.create_handcard(self._logic[self._active_player_logic].get_active_card().get_value())
+        self.phase_2()
+
+    def draw_from_discard(self):
+        discard_pile: DiscardPile = self._logic.get_discard_pile()
+        all_ = discard_pile.get_all()
+        if len(all_) > 1:
+            card: logCard = all_[1]
+            last_top_name = card_name_from_value(card.get_value())
+            self._objekte[2].set_name(last_top_name)
+        else:
+            self._objekte[2] = Card(Vector([350, 150]), "Karte-Rueck.png", self._card_scale_deck,
+                                    pos_from_center=Vector(default_value=-200))
+        self._logic.draw(self._active_player_logic, DrawOptions.DISCARD_PILE)
+        self.create_handcard(self._logic[self._active_player_logic].get_active_card().get_value())
+        self.phase_2()
+
+    def cabo(self):
+        self._cabo = True
+        self._cabo_caller = self._active_player_gui
+        self._objekte.append(Text(Vector(), Vector(dimension=3), "Cabo has been called!", 30,
+                                  pos_from_center=self._middlePoint, identifier="cabo_text"))
+        self.delete_options()
+        a = AnimationHandler(
+            Vector(),
+            Vector(default_value=1),
+            globals.EASE_IN_OUT,
+            2,
+            0
+        )
+        a.on_finished(self.cabo_notified)
+        a.start()
+        self._other_ani.append(a)
+
+    def cabo_notified(self):
+        to_delete: list = list()
+        for index in range(len(self._objekte) - 1, -1, -1):
+            if isinstance(self._objekte[index], Text) and self._objekte[index].get_identifier() == "cabo_text":
+                to_delete.append(index)
+        for i in to_delete:
+            self._objekte.pop(i)
+        self._logic.cabo(self._active_player_logic)
+        self.next_player()
+
+    def swap_self(self):
+        temp = Card(Vector(), "Karte-00.png", self._card_scale_player)
+        card_width = temp.get_size()[0]
+        card_height = temp.get_size()[1]
+        del temp
+        for i in range(self._cards):
+            b = Button(
+                Vector(),
+                card_width + 5, 100,
+                globals.BACKGROUND_COLOR,
+                "t",
+                card_height,
+                identifier="swap_self",
+                pos_from_center=self._pos1[i].get_center()
+            )
+            b.add_event_listener(self.swappy_selfy, i)
+            self._objekte.append(b)
+        self.delete_options()
+        self.update_cards()
+
+    def swappy_selfy(self, card):
+        to_delete: list = list()
+        for index in range(len(self._objekte) - 1, -1, -1):
+            if isinstance(self._objekte[index], (Button, Card)) and self._objekte[index].get_identifier() == "swap_self":
+                to_delete.append(index)
+        for i in to_delete:
+            self._objekte.pop(i)
+        self._logic.swap_self(self._active_player_logic, card)
+        self._handcard = None
+        self.next_player()
+
+    @TODO
+    def end_game(self):
+        ...
 
     def throw_away(self):
         self._logic.discard(self._active_player_logic)
         self.delete_options()
         self.move_handcard_discard()
         events = self._logic.get_events()
+        if len(events) == 0:
+            self.next_player()
+            return
+
         for event in events:
             assert isinstance(event, LogicEvent)
             if event.get_kind() == LogicEvents.PEEK_EFFECT:
@@ -264,7 +401,11 @@ class GamePanel(Panel):
         card_width = temp.get_size()[0]
         card_height = temp.get_size()[1]
         del temp
+        print("Phase 3:")
+        print(self._active_player_logic)
+        print(self._pos1)
         for i in range(self._cards):
+            print(self._pos1)
             b = Button(
                 Vector(),
                 card_width + 5, 100,
@@ -280,6 +421,7 @@ class GamePanel(Panel):
         self.update_cards()
 
     def peek(self, card_num):
+        self.end_peek()
         see_card: Card = Card(
             Vector(),
             card_name_from_value(self.get_hidden_card_val(self._active_player_logic, card_num)),
@@ -295,6 +437,7 @@ class GamePanel(Panel):
             3,
             0
         )
+        a.on_finished(self.next_player)
         a.on_finished(self.end_peek)
         a.start()
         self._other_ani.append(a)
@@ -306,7 +449,6 @@ class GamePanel(Panel):
                 to_delete.append(index)
         for i in to_delete:
             self._objekte.pop(i)
-        self.next_player()
 
     def get_hidden_card_val(self, player, card) -> int:
         return self._logic.get_players()[player].get_hidden_cards()[card].get_value()
@@ -350,6 +492,7 @@ class GamePanel(Panel):
         self.update_cards()
 
     def spy(self, card, player_list, p):
+        self.end_spy()
         enemy_player = (self._active_player_logic + p) % self._player_count
         position = player_list[card].get_center()
         if p == 1:
@@ -373,6 +516,7 @@ class GamePanel(Panel):
             3,
             0
         )
+        a.on_finished(self.next_player)
         a.on_finished(self.end_spy)
         a.start()
         self._other_ani.append(a)
@@ -384,7 +528,6 @@ class GamePanel(Panel):
                 to_delete.append(index)
         for i in to_delete:
             self._objekte.pop(i)
-        self.next_player()
 
     def phase_5(self):
         spy_buttons: list = list()
@@ -425,13 +568,14 @@ class GamePanel(Panel):
 
     def swap(self, card, player_list, p, identifier):
         self.delete_swap(identifier)
-        if len(self._swap_selectd) < 2:
-            self._swap_selectd.append((card, player_list, p, identifier))
+        if len(self._swap_selected) < 1:
+            self._swap_selected.append((card, player_list, p, identifier))
             return
+        self._swap_selected.append((card, player_list, p, identifier))
         player_id = self._active_player_logic
         enemy_id = (self._active_player_logic + p) % self._player_count
-        card_player = self._swap_selectd[0][0] if self._swap_selectd[0][3] == "swap_self" else self._swap_selectd[1][0]
-        card_enemy = self._swap_selectd[0][0] if self._swap_selectd[0][3] == "swap_other" else self._swap_selectd[1][0]
+        card_player = self._swap_selected[0][0] if self._swap_selected[0][3] == "swap_self" else self._swap_selected[1][0]
+        card_enemy = self._swap_selected[0][0] if self._swap_selected[0][3] == "swap_other" else self._swap_selected[1][0]
 
         self._logic._swap_effect(player_id, enemy_id, card_player, card_enemy)
         self._swap_selected = list()
@@ -448,7 +592,8 @@ class GamePanel(Panel):
     def move_handcard_discard(self):
         i = self._objekte.index(self._handcard)
         name_card = self._handcard.get_name()
-        self._objekte[2] = Card(Vector(), name_card, self._card_scale_deck, pos_from_center=self._discard_pos)
+        self._objekte[2] = Card(Vector(), name_card, self._card_scale_deck,
+                                pos_from_center=self._discard_pos, identifier="discard_top")
         self._handcard = None
         self._objekte.pop(i)
 
@@ -479,6 +624,7 @@ class GamePanel(Panel):
             self._pos1 = [*temp_pos3]
             self._pos3 = [*temp_pos2]
             self._pos2 = [*temp_pos4]
+
         self.re_reset_player_cards()
         self.update_cards()
         self.set_player_card_location()
@@ -571,7 +717,10 @@ class GamePanel(Panel):
                 self._animation1[-1].start()
 
                 offset_x -= card_width + gap_width
-            self._animation1[-1].on_finished(self.phase_1)
+            if self._round_counter in [1, 2] and not self._has_ai:
+                self._animation1[-1].on_finished(self.phase_1, "from_the_location_func")
+            elif self._round_counter == 1 and self._active_player_gui == 1:
+                self._animation1[-1].on_finished(self.phase_1, "from_the_location_func")
 
         if len(self._pos2) > 0:
             offset_x: float = total_card_width / 2 - card_width / 2

@@ -17,7 +17,7 @@ class Card(BaseObject):
         self._img = pygame.image.load("./resources/cards/" + name)
         self._img = pygame.transform.scale(self._img, (
             self._img.get_rect().size[0] * scale_size, self._img.get_rect().size[1] * scale_size)
-                                           )
+        )
         self._img = pygame.transform.rotate(self._img, rotation)
 
         self._size = Vector([self._img.get_rect().size[0], self._img.get_rect().size[1]])
@@ -55,8 +55,17 @@ class Card(BaseObject):
         self._size = Vector([self._img.get_rect().size[0], self._img.get_rect().size[1]])
         self.set_position_from_center(self._position + Vector(center))
 
+    def set_name(self, name):
+        self._name = name
+        self._img = pygame.image.load("./resources/cards/" + name)
+        self._img = pygame.transform.scale(self._img, (
+            self._img.get_rect().size[0] * self._scale_size, self._img.get_rect().size[1] * self._scale_size)
+        )
+        self._img = pygame.transform.rotate(self._img, self._rotation)
+        self._size = Vector([self._img.get_rect().size[0], self._img.get_rect().size[1]])
+
     def __str__(self):
-        return f"Card at {hex(id(self))}: {self._position}"
+        return f"Card at {hex(id(self))}: {self._position} | {self._name}"
 
     def __repr__(self):
-        return f"Card at {hex(id(self))}: {self._position}"
+        return f"Card at {hex(id(self))}: {self._position} | {self._name}"
