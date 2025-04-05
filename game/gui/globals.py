@@ -4,7 +4,7 @@ from pylix.algebra import Vector
 PHI: float = 1.618033988749895
 SIZE: tuple = (700 * PHI, 700)
 
-FPS: int = 240
+FPS: int = 60
 EASE_IN_OUT = Vector([.7,.06,.23,.97])
 
 BACKGROUND_COLOR: Vector = Vector([62, 76, 84])

@@ -70,5 +70,3 @@ class AnimationHandler:
                 a[0](*a[2])
             else:
                 a[0]()
-
-        # Hello

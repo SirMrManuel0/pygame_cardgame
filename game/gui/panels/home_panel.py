@@ -5,6 +5,7 @@ from game.gui.objects import Button
 from pylix.algebra import Vector
 from game.gui import globals
 
+
 class HomePanel(Panel):
     def __init__(self):
         super().__init__()
@@ -30,7 +31,6 @@ class HomePanel(Panel):
         )
         self.add_object(self.start_btn)
 
-
         btn2 = Button(
             Vector([globals.SIZE[0] / 2 - 200, 330]),
             400, 30,
@@ -51,6 +51,6 @@ class HomePanel(Panel):
 
         self.add_object(btn3)
 
-        text = Text(Vector([10, globals.SIZE[1] - 20]), Vector([255, 255, 255]), "Ein Spiel von : Tarik, Louis & Vito", 20)
+        text = Text(Vector([10, globals.SIZE[1] - 20]), Vector([255, 255, 255]), "Ein Spiel von : Tarik, Louis & Vito",
+                    20)
         self.add_object(text)
-        
