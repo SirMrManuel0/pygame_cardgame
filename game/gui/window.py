@@ -5,6 +5,7 @@ from game.gui.panels.home_panel import HomePanel
 from game.gui.panels.pre_game_panel import PreGamePanel
 from game.gui.panels.rules_panel import RulesPanel
 from game.gui.panels.game_panel import GamePanel
+from game.gui.panels.end_game_panel import EndPanel
 from game.errors.base_errors import *
 import game.errors.assertion as assertion
 
@@ -26,6 +27,10 @@ class Window:
         player_count, ai_count, player_pos, ai_pos, cards = self._panel.get_for_game()
         self._panel = self._allPanels[3](player_count, ai_count, player_pos, ai_pos, cards)
 
+    def create_end_game_panel(self):
+        self._panel = self._allPanels[4]()
+        self._panel.new_game_button.add_event_listener(self.createPreGamePanel)
+
     def __init__(self, dimension, title: str):
         self._events = dict()
         self._dimension: gui.Dimension = dimension
@@ -33,13 +38,13 @@ class Window:
         self._title = title
         self._clock = pygame.time.Clock()
         self._screen = pygame.display.set_mode(self._dimension.get_dimensions(), pygame.SRCALPHA)
-        self._allPanels = [HomePanel, PreGamePanel, RulesPanel, GamePanel]
+        self._allPanels = [HomePanel, PreGamePanel, RulesPanel, GamePanel, EndPanel]
         self._panel = None
         self._cursorImg = pygame.image.load(game.get_path_resource("cursor", "Cursor"))
         self._cursorImg = pygame.transform.scale(self._cursorImg, (22, 22))
         self._cursorImgRect = self._cursorImg.get_rect()
 
-        self.createHomePanel()
+        self.create_end_game_panel()
 
         pygame.display.set_caption(self._title)
         pygame.display.set_icon(pygame.image.load(game.get_path_resource("icons", "purple")))
