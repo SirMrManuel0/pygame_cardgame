@@ -1,4 +1,4 @@
- # from game import get_path_abs, get_path_resource
+# from game import get_path_abs, get_path_resource
 from enum import Enum
 
 from game.player import Player
@@ -156,7 +156,7 @@ class CaboLogic:
         return min_players
 
     def get_score_board(self) -> list:
-        return sorted(self._players, key=lambda player:player.get_score())
+        return sorted(self._players, key=lambda player: player.get_score())
 
     def cabo(self, pid: int) -> None:
         assertion.assert_types(pid, Types.INT.value, ArgumentError, code=ArgumentCodes.NOT_INT)

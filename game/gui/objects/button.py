@@ -1,7 +1,5 @@
 from typing import override
 
-from mkdocs.config.config_options import Optional
-
 from game.gui.objects import Rectangle
 from game.gui.objects import Text
 from pylix.algebra import Vector

@@ -10,8 +10,9 @@ class Text(BaseObject):
         self._font = pygame.font.SysFont('freesanbold.ttf', font_size)
         self._text = self._font.render(text, True, color.get_data())
         self._textRect = self._text.get_rect()
-        self._textRect.center = (int(self._position[0] + self._text.get_width() / 2), int(self._position[1] + self._text.get_height() / 2))
-        
+        self._textRect.center = (
+        int(self._position[0] + self._text.get_width() / 2), int(self._position[1] + self._text.get_height() / 2))
+
     def center_absolute_x(self):
         self._textRect.center = (int(globals.SIZE[0] / 2), int(self._position[1] + self._text.get_height() / 2))
 
@@ -38,4 +39,4 @@ class Text(BaseObject):
         self._text = self._font.render(new_text, True, self._color.get_data())
         self._textRect = self._text.get_rect()
         self._textRect.center = (
-        int(self._position[0] + self._text.get_width() / 2), int(self._position[1] + self._text.get_height() / 2))
+            int(self._position[0] + self._text.get_width() / 2), int(self._position[1] + self._text.get_height() / 2))
