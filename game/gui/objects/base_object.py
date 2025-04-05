@@ -2,7 +2,7 @@ from pylix.algebra import Vector
 
 
 class BaseObject:
-    def __init__(self, position, color):
+    def __init__(self, position = Vector(dimension=2), color = Vector(dimension=3)):
         self._position = position
         self._color = color
         self._clickListener = []
