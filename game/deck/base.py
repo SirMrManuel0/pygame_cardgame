@@ -57,3 +57,6 @@ class Card:
         elif self._value in (11, 12):
             return Effect.SWAP
         return Effect.NONE
+
+    def __str__(self):
+        return f"Card at {hex(id(self))} with value {self._value}"
