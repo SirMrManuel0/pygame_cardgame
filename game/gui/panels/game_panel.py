@@ -235,15 +235,12 @@ class GamePanel(Panel):
         for event in events:
             assert isinstance(event, LogicEvent)
             if event.get_kind() == LogicEvents.PEEK_EFFECT:
-                print("hier3")
                 self._logic.ai_phase3(id_)
                 self._logic.remove_event(event.get_eid())
             elif event.get_kind() == LogicEvents.SPY_EFFECT:
-                print("hier4")
                 self._logic.ai_phase4(id_)
                 self._logic.remove_event(event.get_eid())
             elif event.get_kind() == LogicEvents.SWAP_EFFECT:
-                print("hier5")
                 self._logic.ai_phase5(id_)
             elif not event.get_kind() == LogicEvents.CABO:
                 self.update_discard_pile()
@@ -259,6 +256,8 @@ class GamePanel(Panel):
             if event.get_kind() == LogicEvents.CABO:
                 self.update_discard_pile()
                 self.cabo()
+                return
+        self.next_player()
 
     def phase_2(self):
         self.change_announcer_text("Execute an action!")
@@ -374,7 +373,6 @@ class GamePanel(Panel):
         self.phase_2()
 
     def cabo(self):
-        print("Cabo called", self._active_player_gui)
         self._cabo = True
         self._cabo_caller = self._active_player_gui
 
