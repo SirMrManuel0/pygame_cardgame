@@ -25,6 +25,7 @@ class CaboLogic:
         self._players: list = [Player(self._game_deck, cards=start_card_count, pid=i) for i in range(player_count)]
         self._player_count: int = player_count
         self.event_handler: LogicEventHandler = LogicEventHandler()
+        self._cabo_called: bool = False
 
     def get_game_deck(self) -> GameDeck:
         return self._game_deck
@@ -161,8 +162,11 @@ class CaboLogic:
 
     def cabo(self, pid: int) -> None:
         assertion.assert_types(pid, Types.INT.value, ArgumentError, code=ArgumentCodes.NOT_INT)
-
+        self._cabo_called: bool = True
         self.event_handler.add_event(LogicEvents.CABO, pid)
+
+    def was_cabo_called(self) -> bool:
+        return self._cabo_called
 
     def __iter__(self):
         return iter(self._players)

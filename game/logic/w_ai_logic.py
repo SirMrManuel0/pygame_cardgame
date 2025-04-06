@@ -53,9 +53,11 @@ class LogicWAI(CaboLogic):
             ),
             enemy_cards
         )
-        if deck_choice == DrawOptions.CABO:
+        if deck_choice == DrawOptions.CABO and not self._cabo_called:
             self.cabo(pid)
             return prob, deck_choice, action_probs
+        elif self._cabo_called:
+            deck_choice = DrawOptions.GAME_DECK
         self.draw(pid, deck_choice)
         if self._players[pid].get_active_card().get_value() == -1:
             self.draw(pid, DrawOptions.GAME_DECK)
