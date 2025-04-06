@@ -194,7 +194,6 @@ class GamePanel(Panel):
         self.update_all_options()
         self.update_cards()
 
-        print(self._active_player_gui)
         if self._logic.event_handler.has_event(LogicEvents.EMPTY_DECK):
             self._logic.event_handler.remove_event_by_kind(LogicEvents.EMPTY_DECK)
             self._logic.restock_deck(Shuffle.DUMP)
@@ -218,12 +217,6 @@ class GamePanel(Panel):
         self.update_options(self._phase_1_options[self._cabo:])
 
     def _ai(self, id_):
-        for i, p in enumerate(self._logic):
-            print(i, type(p))
-        print("called for", id_)
-        print("mask_gui_logic", self._mask_gui_logic)
-        for card in self._logic.get_players()[id_].get_hidden_cards():
-            print(card)
         self._logic.ai_phase1(id_)
         self._logic.ai_phase2(id_)
         events = self._logic.get_events()
@@ -235,15 +228,12 @@ class GamePanel(Panel):
         for event in events:
             assert isinstance(event, LogicEvent)
             if event.get_kind() == LogicEvents.PEEK_EFFECT:
-                print("hier3")
                 self._logic.ai_phase3(id_)
                 self._logic.remove_event(event.get_eid())
             elif event.get_kind() == LogicEvents.SPY_EFFECT:
-                print("hier4")
                 self._logic.ai_phase4(id_)
                 self._logic.remove_event(event.get_eid())
             elif event.get_kind() == LogicEvents.SWAP_EFFECT:
-                print("hier5")
                 self._logic.ai_phase5(id_)
             elif not event.get_kind() == LogicEvents.CABO:
                 self.update_discard_pile()
@@ -259,6 +249,8 @@ class GamePanel(Panel):
             if event.get_kind() == LogicEvents.CABO:
                 self.update_discard_pile()
                 self.cabo()
+                return
+        self.next_player()
 
     def phase_2(self):
         self.change_announcer_text("Execute an action!")
@@ -374,7 +366,6 @@ class GamePanel(Panel):
         self.phase_2()
 
     def cabo(self):
-        print("Cabo called", self._active_player_gui)
         self._cabo = True
         self._cabo_caller = self._active_player_gui
 
@@ -434,7 +425,6 @@ class GamePanel(Panel):
     def update_discard_pile(self):
         top_card: logCard = self._logic.get_discard_pile().get_all()[0]
         name: str = card_name_from_value(top_card.get_value())
-        print(top_card)
         self._objekte[2].set_name(name)
 
     def delete_animation_w_o_del(self):
@@ -457,13 +447,6 @@ class GamePanel(Panel):
         self._other_ani = list()
 
     def end_game(self):
-        print("GAME END")
-        for player in self._logic:
-            print(player.get_pid())
-            print(player.get_score())
-            for card in player.get_hidden_cards():
-                print(card)
-
         self._func()
 
     def throw_away(self):
