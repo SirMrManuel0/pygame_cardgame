@@ -5,6 +5,7 @@ from game.gui.objects import Button
 from game.gui.objects import Ghost
 from pylix.algebra import Vector
 from game.gui import globals
+import webbrowser
 
 
 class HomePanel(Panel):
@@ -35,15 +36,15 @@ class HomePanel(Panel):
         )
         self.add_object(self.start_btn)
 
-        btn2 = Button(
+        self.anleitung_btn = Button(
             Vector([globals.SIZE[0] / 2 - 200, 330]),
             400, 30,
             Vector([250, 241, 230]),
             "Anleitungen",
             20
         )
-
-        self.add_object(btn2)
+        self.anleitung_btn.add_event_listener(lambda : webbrowser.open("http://www.smiling-monster.de/spiele/smg007/download/SMG-Cabo-DE.pdf"))
+        self.add_object(self.anleitung_btn)
 
         btn3 = Button(
             Vector([globals.SIZE[0] / 2 - 200, 410]),
@@ -52,7 +53,7 @@ class HomePanel(Panel):
             "Check out the code",
             20
         )
-
+        btn3.add_event_listener(lambda : webbrowser.open("https://github.com/SirMrManuel0/pygame_cardgame"))
         self.add_object(btn3)
 
         text = Text(Vector([10, globals.SIZE[1] - 20]), Vector([255, 255, 255]), "Ein Spiel von : Tarik, Louis & Vito",

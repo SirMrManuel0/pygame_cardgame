@@ -16,7 +16,7 @@ class EndPanel(Panel):
         self._firework2.update_animation(dt)
         self.ghost.update_animation(dt)
 
-    def __init__(self):
+    def __init__(self, winner, cabo_caller, game_duration, number_of_rounds, sum_card_of_winner):
         super().__init__()
 
         self._card_sum = 39
@@ -51,29 +51,29 @@ class EndPanel(Panel):
         margin2 = 100
         marginTop = 20
 
-        winnerText= Text(Vector([globals.SIZE[0] / 2 - margin, 180 + marginTop]), Vector([255, 255, 255]), "Winner : ", 30)
+        winnerText= Text(Vector([globals.SIZE[0] / 2 - margin, 180 + marginTop]), Vector([255, 255, 255]), "Winner", 30)
         self.add_object(winnerText)
-        winner = Text(Vector([globals.SIZE[0] / 2 + margin2, 180 + marginTop]), Vector([255, 255, 255]), "Immanuel Kant", 40)
+        winner = Text(Vector([globals.SIZE[0] / 2 + margin2, 180 + marginTop]), Vector([255, 255, 255]), "Player " + str(winner), 40)
         self.add_object(winner)
 
-        caboCalledText = Text(Vector([globals.SIZE[0] / 2 - margin, 220 + marginTop]), Vector([255, 255, 255]), "Cabo was called by : ", 30)
+        caboCalledText = Text(Vector([globals.SIZE[0] / 2 - margin, 220 + marginTop]), Vector([255, 255, 255]), "Cabo was called by", 30)
         self.add_object(caboCalledText)
-        caboCalled = Text(Vector([globals.SIZE[0] / 2 + margin2, 220 + marginTop]), Vector([255, 255, 255]), "Friedrich Nietzsche", 40)
+        caboCalled = Text(Vector([globals.SIZE[0] / 2 + margin2, 220 + marginTop]), Vector([255, 255, 255]), "Player " + str(cabo_caller), 40)
         self.add_object(caboCalled)
 
-        gameDuarationText = Text(Vector([globals.SIZE[0] / 2 - margin, 260 + marginTop]), Vector([255, 255, 255]), "Game duration : ", 30)
+        gameDuarationText = Text(Vector([globals.SIZE[0] / 2 - margin, 260 + marginTop]), Vector([255, 255, 255]), "Game duration", 30)
         self.add_object(gameDuarationText)
-        gameDuaration = Text(Vector([globals.SIZE[0] / 2 + margin2, 260 + marginTop]), Vector([255, 255, 255]), "20s", 40)
+        gameDuaration = Text(Vector([globals.SIZE[0] / 2 + margin2, 260 + marginTop]), Vector([255, 255, 255]), str(round(game_duration / 60, 2)) + " minutes", 40)
         self.add_object(gameDuaration)
 
-        numberOfRoundsText = Text(Vector([globals.SIZE[0] / 2 - margin, 300 + marginTop]), Vector([255, 255, 255]), "Number of rounds : ", 30)
+        numberOfRoundsText = Text(Vector([globals.SIZE[0] / 2 - margin, 300 + marginTop]), Vector([255, 255, 255]), "Number of rounds", 30)
         self.add_object(numberOfRoundsText)
-        numberOfRounds = Text(Vector([globals.SIZE[0] / 2 + margin2, 300 + marginTop]), Vector([255, 255, 255]), "5", 40)
+        numberOfRounds = Text(Vector([globals.SIZE[0] / 2 + margin2, 300 + marginTop]), Vector([255, 255, 255]), str(number_of_rounds), 40)
         self.add_object(numberOfRounds)
 
-        winningSumText = Text(Vector([globals.SIZE[0] / 2 - margin, 340 + marginTop]), Vector([255, 255, 255]), "Card sum of the winner : ", 30)
+        winningSumText = Text(Vector([globals.SIZE[0] / 2 - margin, 340 + marginTop]), Vector([255, 255, 255]), "Card sum of the winner", 30)
         self.add_object(winningSumText)
-        winningSum = Text(Vector([globals.SIZE[0] / 2 + margin2, 340 + marginTop]), Vector([255, 255, 255]), "2", 40)
+        winningSum = Text(Vector([globals.SIZE[0] / 2 + margin2, 340 + marginTop]), Vector([255, 255, 255]), str(sum_card_of_winner), 40)
         self.add_object(winningSum)
 
         self._exitButton = Button(

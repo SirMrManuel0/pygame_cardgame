@@ -87,5 +87,8 @@
         "ghost-10" : "ghosts/ghost-10.png",
         "ghost-11" : "ghosts/ghost-11.png",
         "ghost-12" : "ghosts/ghost-12.png"
+    },
+    "music" : {
+        "background" : "music/background.mp3"
     }
 }

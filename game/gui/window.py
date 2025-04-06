@@ -9,27 +9,7 @@ from game.gui.panels.end_game_panel import EndPanel
 from game.errors.base_errors import *
 import game.errors.assertion as assertion
 
-
 class Window:
-
-    def createHomePanel(self):
-        self._panel = self._allPanels[0]()
-        self._panel.start_btn.add_event_listener(self.createPreGamePanel)
-
-    def createPreGamePanel(self):
-        self._panel = self._allPanels[1]()
-        self._panel.start_button.add_event_listener(self.createGamePanel)
-
-    def createAnleitungPanel(self):
-        self._panel = self._allPanels[2]()
-
-    def createGamePanel(self):
-        player_count, ai_count, player_pos, ai_pos, cards = self._panel.get_for_game()
-        self._panel = self._allPanels[3](player_count, ai_count, player_pos, ai_pos, cards)
-
-    def create_end_game_panel(self):
-        self._panel = self._allPanels[4]()
-        self._panel.new_game_button.add_event_listener(self.createPreGamePanel)
 
     def __init__(self, dimension, title: str):
         self._events = dict()
@@ -44,10 +24,31 @@ class Window:
         self._cursorImg = pygame.transform.scale(self._cursorImg, (22, 22))
         self._cursorImgRect = self._cursorImg.get_rect()
 
-        self.create_end_game_panel()
+        self.createHomePanel()
 
         pygame.display.set_caption(self._title)
         pygame.display.set_icon(pygame.image.load(game.get_path_resource("icons", "purple")))
+
+    def createHomePanel(self):
+        self._panel = self._allPanels[0]()
+        self._panel.start_btn.add_event_listener(self.createPreGamePanel)
+
+    def createPreGamePanel(self):
+        self._panel = self._allPanels[1]()
+        self._panel.start_button.add_event_listener(self.createGamePanel)
+
+    def createAnleitungPanel(self):
+        self._panel = self._allPanels[2]()
+
+    def createGamePanel(self):
+        player_count, ai_count, player_pos, ai_pos, cards = self._panel.get_for_game()
+        self._panel = self._allPanels[3](player_count, ai_count, player_pos, ai_pos, cards, self.create_end_game_panel)
+
+    def create_end_game_panel(self):
+        winner, cabo_caller, game_duration, number_of_rounds, sum_card_of_winner = self._panel.get_for_end_game()
+        self._panel = self._allPanels[4](winner, cabo_caller, game_duration, number_of_rounds, sum_card_of_winner)
+
+        self._panel.new_game_button.add_event_listener(self.createPreGamePanel)
 
     def add_event(self, event_type: int, func):
         if event_type in self._events:
