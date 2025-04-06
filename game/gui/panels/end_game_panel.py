@@ -2,6 +2,7 @@ from game.gui.panels import Panel
 from game.gui.objects import Rectangle
 from game.gui.objects import Text
 from game.gui.objects import Button
+from game.gui.objects import Ghost
 from pylix.algebra import Vector
 from game.gui import globals
 from game.gui.objects import Fireworks
@@ -13,12 +14,16 @@ class EndPanel(Panel):
     def update_animation(self, dt):
         self._firework.update_animation(dt)
         self._firework2.update_animation(dt)
+        self.ghost.update_animation(dt)
 
     def __init__(self):
         super().__init__()
 
         self._card_sum = 39
         self._number_of_rounds = 23
+
+        self.ghost = Ghost()
+        self.add_object(self.ghost)
 
         self._firework = Fireworks(
             min(round((50 - self._card_sum) * (self._number_of_rounds / 4)), 200),
@@ -48,7 +53,7 @@ class EndPanel(Panel):
 
         winnerText= Text(Vector([globals.SIZE[0] / 2 - margin, 180 + marginTop]), Vector([255, 255, 255]), "Winner : ", 30)
         self.add_object(winnerText)
-        winner = Text(Vector([globals.SIZE[0] / 2 + margin2, 180 + marginTop]), Vector([255, 255, 255]), "Martin", 40)
+        winner = Text(Vector([globals.SIZE[0] / 2 + margin2, 180 + marginTop]), Vector([255, 255, 255]), "Immanuel Kant", 40)
         self.add_object(winner)
 
         caboCalledText = Text(Vector([globals.SIZE[0] / 2 - margin, 220 + marginTop]), Vector([255, 255, 255]), "Cabo was called by : ", 30)

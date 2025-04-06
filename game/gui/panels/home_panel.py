@@ -2,6 +2,7 @@ from game.gui.panels import Panel
 from game.gui.objects import Rectangle
 from game.gui.objects import Text
 from game.gui.objects import Button
+from game.gui.objects import Ghost
 from pylix.algebra import Vector
 from game.gui import globals
 
@@ -16,6 +17,9 @@ class HomePanel(Panel):
         # a.centerX()
 
         # self.add_object(a)
+
+        self.ghost = Ghost()
+        self.add_object(self.ghost)
 
         title = Text(Vector([10, 20]), Vector([255, 255, 255]), "Cabuh!", 100)
         title.center_absolute_x()
@@ -54,3 +58,6 @@ class HomePanel(Panel):
         text = Text(Vector([10, globals.SIZE[1] - 20]), Vector([255, 255, 255]), "Ein Spiel von : Tarik, Louis & Vito",
                     20)
         self.add_object(text)
+
+    def update_animation(self, dt):
+        self.ghost.update_animation(dt)

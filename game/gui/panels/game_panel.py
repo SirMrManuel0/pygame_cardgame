@@ -10,7 +10,7 @@ from game.deck import DiscardPile, Shuffle
 from game.deck import Card as logCard
 from game.event_handler import LogicEvent, LogicEvents
 from game.gui.animation import AnimationHandler
-from game.gui.objects import Ellipse, Card, Button, Text
+from game.gui.objects import Ellipse, Card, Button, Text, Ghost
 from game.logic import CaboLogic
 from game.logic.logic import DrawOptions
 from game.logic.w_ai_logic import LogicWAI
@@ -84,6 +84,9 @@ class GamePanel(Panel):
         self._active_player_gui: int = 1
         self._active_player_logic: int = 0
         self._round_counter: int = 1
+
+        self.ghost = Ghost()
+        self.add_object(self.ghost)
 
         second_light: Ellipse = Ellipse(
             self._middlePoint,
@@ -854,6 +857,7 @@ class GamePanel(Panel):
 
     @override
     def update_animation(self, dt):
+        self.ghost.update_animation(dt)
 
         for i, a in enumerate(self._other_ani):
             if a.update(dt) == -1:
