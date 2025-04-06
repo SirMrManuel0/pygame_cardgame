@@ -4,6 +4,7 @@ import time
 
 from pylix.algebra import Vector
 from pylix.errors.decorator import TODO
+from sympy.physics.units.systems.mksa import dimsys_MKSA
 from typing_extensions import override
 
 from game.deck import DiscardPile, Shuffle
@@ -28,7 +29,7 @@ def card_name_from_value(value) -> str:
 
 
 class GamePanel(Panel):
-    def __init__(self, player_count, ai_count, player_pos, ai_pos, cards):
+    def __init__(self, player_count, ai_count, player_pos, ai_pos, cards, func):
         """
 
         :param player_count: ALL players including AI
@@ -38,6 +39,7 @@ class GamePanel(Panel):
         :param cards: How many cards
         """
         super().__init__()
+        self._func = func
         self._player_count: int = player_count
         self._human_count: int = player_count - ai_count
         self._ai_count: int = ai_count
@@ -45,6 +47,8 @@ class GamePanel(Panel):
         self._ai_pos: tuple[bool, bool, bool] = ai_pos
         self._has_ai: bool = any(self._ai_pos)
         self._cards: int = cards
+        self._game_duration = 0
+
         # 1 -> Human, 0 -> AI
         self._order: list = [1]
         if self._player_pos[0]:
@@ -85,9 +89,6 @@ class GamePanel(Panel):
         self._active_player_logic: int = 0
         self._round_counter: int = 1
 
-        self.ghost = Ghost()
-        self.add_object(self.ghost)
-
         second_light: Ellipse = Ellipse(
             self._middlePoint,
             460,
@@ -114,6 +115,30 @@ class GamePanel(Panel):
         self._deck_center_position = self._middlePoint + 0.75 * Vector((self._c2.get_size()[0], 0))
         self._c2.set_position_from_center(self._deck_center_position)
         self.add_object(self._c2)
+
+
+        self.ghost = Ghost()
+        self.add_object(self.ghost)
+
+        text = Text(
+            Vector(),
+            Vector(default_value=255, dimension=3),
+            "Look at a card!",
+            50,
+            pos_from_center=self._middlePoint - Vector([0, 190]),
+            identifier="announcer_text"
+        )
+        self.add_object(text)
+
+        text1 = Text(
+            Vector(),
+            Vector(default_value=255, dimension=3),
+            "Player 1",
+            40,
+            pos_from_center=self._middlePoint - Vector([0, 240]),
+            identifier="player_text"
+        )
+        self.add_object(text1)
 
         self._extra_player_positions = [*self._player_pos]
         self._middle_point_pos1: Vector = Vector([globals.SIZE[0] / 2, globals.SIZE[1]])
@@ -149,12 +174,26 @@ class GamePanel(Panel):
         self.set_player_card_location()
         self.update_cards()
 
+    def change_player_text(self):
+        self._objekte[6].change_text(f"Player {self._active_player_gui}")
+
+    def change_announcer_text(self, text):
+        self._objekte[5].change_text(text)
+
+    def draw(self, screen):
+        for i in self._objekte:
+            i.draw(screen)
+
+        self._objekte[5].draw(screen)
+        self._objekte[6].draw(screen)
+
     def is_active_player_gui_ai(self) -> bool:
         return self._order[self._active_player_logic] == 0
 
     def phase_1(self):
         self.update_all_options()
         self.update_cards()
+
         print(self._active_player_gui)
         if self._logic.event_handler.has_event(LogicEvents.EMPTY_DECK):
             self._logic.event_handler.remove_event_by_kind(LogicEvents.EMPTY_DECK)
@@ -174,6 +213,8 @@ class GamePanel(Panel):
         if self._round_counter == 3 and self._active_player_gui == 1:
             self.draw_from_deck()
             return
+
+        self.change_announcer_text("Draw a card!")
         self.update_options(self._phase_1_options[self._cabo:])
 
     def _ai(self, id_):
@@ -220,6 +261,7 @@ class GamePanel(Panel):
                 self.cabo()
 
     def phase_2(self):
+        self.change_announcer_text("Execute an action!")
         self.update_options(self._phase_2_options)
 
     def delete_options(self):
@@ -335,8 +377,9 @@ class GamePanel(Panel):
         print("Cabo called", self._active_player_gui)
         self._cabo = True
         self._cabo_caller = self._active_player_gui
-        self._objekte.append(Text(Vector(), Vector(dimension=3), "Cabo has been called!", 30,
-                                  pos_from_center=self._middlePoint, identifier="cabo_text"))
+
+        self.change_announcer_text("Cabo has been called!")
+
         self.delete_options()
         a = AnimationHandler(
             Vector(),
@@ -350,12 +393,8 @@ class GamePanel(Panel):
         self._other_ani.append(a)
 
     def cabo_notified(self):
-        to_delete: list = list()
-        for index in range(len(self._objekte) - 1, -1, -1):
-            if isinstance(self._objekte[index], Text) and self._objekte[index].get_identifier() == "cabo_text":
-                to_delete.append(index)
-        for i in to_delete:
-            self._objekte.pop(i)
+        self.change_announcer_text("")
+
         self._logic.cabo(self._active_player_logic)
         self.next_player()
 
@@ -389,6 +428,7 @@ class GamePanel(Panel):
         self._logic.swap_self(self._active_player_logic, card)
         self.create_handcard(self._logic.get_players()[self._active_player_logic].get_active_card().get_value())
         self.update_all_options()
+        self._phase_2_options.pop(-1)
         self.phase_2()
 
     def update_discard_pile(self):
@@ -423,7 +463,8 @@ class GamePanel(Panel):
             print(player.get_score())
             for card in player.get_hidden_cards():
                 print(card)
-        sys.exit()
+
+        self._func()
 
     def throw_away(self):
         self._logic.discard(self._active_player_logic)
@@ -452,6 +493,7 @@ class GamePanel(Panel):
                 self.next_player()
 
     def phase_3(self):
+        self.change_announcer_text("Peek at a hidden card!")
         peek_buttons: list = list()
         temp = Card(Vector(), "Karte-00.png", self._card_scale_player)
         card_width = temp.get_size()[0]
@@ -506,6 +548,7 @@ class GamePanel(Panel):
         return self._logic.get_players()[player].get_hidden_cards()[card].get_value()
 
     def phase_4(self):
+        self.change_announcer_text("Spy on an enemies card!")
         spy_buttons: list = list()
         temp = Card(Vector(), "Karte-00.png", self._card_scale_player)
         card_width = temp.get_size()[0]
@@ -582,6 +625,7 @@ class GamePanel(Panel):
             self._objekte.pop(i)
 
     def phase_5(self):
+        self.change_announcer_text("Swap your card with an enemies card!")
         spy_buttons: list = list()
         temp = Card(Vector(), "Karte-00.png", self._card_scale_player)
         card_width = temp.get_size()[0]
@@ -676,6 +720,8 @@ class GamePanel(Panel):
             self._pos1 = [*temp_pos3]
             self._pos3 = [*temp_pos2]
             self._pos2 = [*temp_pos4]
+
+        self.change_player_text()
 
         if self._active_player_gui == self._cabo_caller:
             self.end_game()
@@ -836,7 +882,7 @@ class GamePanel(Panel):
                 offset_y -= card_width + gap_width
 
     def update_cards(self):
-        saved_index = 4
+        saved_index = 7
         while saved_index < len(self._objekte) and isinstance(self._objekte[saved_index], Card):
             self._objekte.pop(saved_index)
 
@@ -857,6 +903,7 @@ class GamePanel(Panel):
 
     @override
     def update_animation(self, dt):
+        self._game_duration = self._game_duration + dt
         self.ghost.update_animation(dt)
 
         for i, a in enumerate(self._other_ani):
@@ -889,3 +936,12 @@ class GamePanel(Panel):
 
             self._pos4[i].set_position_from_center(a.get_current_animation_step())
             self._pos4[i].set_angle(a.get_current_animation_rotation())
+
+    def get_for_end_game(self):
+        return (
+            self._logic.get_winner()[0].get_pid() + 1,
+            self._cabo_caller,
+            self._game_duration,
+            self._round_counter - 2,
+            self._logic.get_winner()[0].get_score()
+        )

@@ -11,6 +11,7 @@ class Text(BaseObject):
         self._text = self._font.render(text, True, color.get_data())
         self._textRect = self._text.get_rect()
         self._identifier = identifier
+        self._pos_from_center = pos_from_center
         if pos_from_center is None:
             self._textRect.center = (
                 int(self._position[0] + self._text.get_width() / 2),
@@ -52,3 +53,6 @@ class Text(BaseObject):
         self._textRect = self._text.get_rect()
         self._textRect.center = (
             int(self._position[0] + self._text.get_width() / 2), int(self._position[1] + self._text.get_height() / 2))
+
+        if self._pos_from_center is not None:
+            self.set_position_from_center(self._pos_from_center)
