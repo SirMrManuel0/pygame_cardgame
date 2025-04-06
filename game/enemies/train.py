@@ -48,6 +48,13 @@ def train(difficulty: Difficulties = Difficulties.EASY,
 
         all_entropies.extend(entropies)
 
+        if env.get_rounds() < 6:
+            rewards.append(torch.tensor(-6))
+        elif env.get_rounds() > 30:
+            rewards.append(torch.tensor(-6))
+        elif 6 <= env.get_rounds() <= 14:
+            rewards.append(torch.tensor(6))
+
         returns = []
         G = 0
         for r in reversed(rewards):

@@ -123,7 +123,7 @@ class BaseEnemy(Player):
         self.update_memory_enemies()
         output, action_probs = self._nn_call(state)
         choice_ = output.rand_choice(self._heat)
-        # 0 -> Deck | 1 -> Disposal Pile
+        # 0 -> Deck | 1 -> Disposal Pile | 3 -> Cabo
         if choice_ == 0:
             return float(output[choice_]), DrawOptions.GAME_DECK, action_probs
         elif choice_ == 1:

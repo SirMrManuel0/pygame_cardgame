@@ -2,13 +2,14 @@ from pylix.algebra import Vector
 
 class AnimationHandler:
     def __init__(self, start_position, end_position, transition_function: Vector, duration, delay,
-                 start_rotation = 0, end_rotation = 0):
+                 start_rotation = 0, end_rotation=0, supress_del=False):
         self._start_position = start_position
         self._end_position = end_position
         self._transition_function = transition_function # transition_function ist ein 4D Vector
         self._duration = duration
         self._delay = delay
         self._t = -self._delay
+        self._supress = supress_del
         #                   HasStarted, isDone
         self._animation_state = [False, False]
 
@@ -63,10 +64,14 @@ class AnimationHandler:
     def start(self):
         self._animation_state[False] = True
 
+    def supress_del(self):
+        self._supress = True
+
     def __del__(self):
-        while len(self._finished) > 0:
-            a = self._finished.pop()
-            if a[1]:
-                a[0](*a[2])
-            else:
-                a[0]()
+        if not self._supress:
+            while len(self._finished) > 0:
+                a = self._finished.pop()
+                if a[1]:
+                    a[0](*a[2])
+                else:
+                    a[0]()

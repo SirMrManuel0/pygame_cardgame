@@ -1,6 +1,7 @@
 import torch
 from pylix.algebra import Vector
 
+from game.deck import Card
 from game.player import Player
 from game.enemies.static import create_enemy
 from game.enemies.policy_nn import PolicyNN
@@ -56,6 +57,8 @@ class LogicWAI(CaboLogic):
             self.cabo(pid)
             return prob, deck_choice, action_probs
         self.draw(pid, deck_choice)
+        if self._players[pid].get_active_card().get_value() == -1:
+            self.draw(pid, DrawOptions.GAME_DECK)
         return prob, deck_choice, action_probs
 
     def ai_phase2(self, pid: int) -> tuple[float, int, int, int, Vector, torch.Tensor]:
@@ -73,6 +76,8 @@ class LogicWAI(CaboLogic):
         self.discard(pid)
         mask = self._players[pid].get_self_mask()
         self._players[pid].update_memory_self()
+        if self._players[pid].get_active_card().get_value() == -1:
+            self._players[pid].set_active_card(Card(1))
         return prob, active_card, swapped_card, put_down_choice, mask, action_probs
 
     def ai_phase3(self, pid: int) -> tuple[float, torch.Tensor]:
@@ -85,6 +90,8 @@ class LogicWAI(CaboLogic):
         )
         self._peek_effect(pid, peek_choice)
         self._players[pid].update_memory_self()
+        if self._players[pid].get_active_card().get_value() == -1:
+            self._players[pid].set_active_card(Card(1))
         return prob, action_probs
 
     def ai_phase4(self, pid: int) -> tuple[float, torch.Tensor]:
@@ -96,6 +103,8 @@ class LogicWAI(CaboLogic):
             )
         )
         self._spy_effect(player, card)
+        if self._players[pid].get_active_card().get_value() == -1:
+            self._players[pid].set_active_card(Card(1))
         return prob, action_probs
 
     def ai_phase5(self, pid: int) -> tuple[float, int, int, int, torch.Tensor]:
@@ -107,6 +116,8 @@ class LogicWAI(CaboLogic):
             )
         )
         self._swap_effect(pid, enemy, player_card, enemy_card)
+        if self._players[pid].get_active_card().get_value() == -1:
+            self._players[pid].set_active_card(Card(1))
         return prob, player_card, enemy, enemy_card, action_probs
 
     def set_ai_all(self, ai: PolicyNN) -> None:

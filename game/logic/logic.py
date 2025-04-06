@@ -70,8 +70,9 @@ class CaboLogic:
         assertion.assert_types(player_id, Types.INT.value, ArgumentError, code=ArgumentCodes.NOT_INT)
         assertion.assert_is_positiv(player_id, ArgumentError, code=ArgumentCodes.NOT_POSITIV)
         card: Card = self._players[player_id].get_active_card()
-        self._players[player_id].set_active_card(Card(-1))
         self._discard_pile.add(card)
+        self._players[player_id].set_active_card(None)
+        self._players[player_id].set_active_card(Card(-1))
         self._execute_effect(card.effect(), player_id)
 
     def restock_deck(self, kind: Shuffle) -> None:
