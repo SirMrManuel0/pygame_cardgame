@@ -8,6 +8,7 @@ from game.gui.objects.ellipse import Ellipse
 from game.gui.objects.lighting_ellipse import LightingEllipse
 from game.gui.objects.lighting_circle import LightingCircle
 from game.gui.objects.fireworks import Fireworks
+from game.gui.objects.ghost import Ghost
 
 __all__ = [
     "BaseObject",
@@ -19,5 +20,6 @@ __all__ = [
     "Ellipse",
     "LightingEllipse",
     "LightingCircle",
-    "Fireworks"
+    "Fireworks",
+    "Ghost"
 ]

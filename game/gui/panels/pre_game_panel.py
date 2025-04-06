@@ -6,6 +6,7 @@ from game.gui.animation.animation_handler import AnimationHandler
 from game.gui.panels import Panel
 from game.gui.objects import Button
 from game.gui.objects import Ellipse
+from game.gui.objects import Ghost
 from game.gui.objects import Card
 from game.logic.logic import CaboLogic
 from game.gui import globals
@@ -26,6 +27,9 @@ class PreGamePanel(Panel):
 
         #                   2        3      4
         self._ai_enable = [False, False, False]
+
+        self.ghost = Ghost()
+        self.add_object(self.ghost)
 
         second_light: Ellipse = Ellipse(
             self._middlePoint,
@@ -275,6 +279,7 @@ class PreGamePanel(Panel):
 
     @override
     def update_animation(self, dt):
+        self.ghost.update_animation(dt)
 
         for i, a in enumerate(self._animation1):
             if a.update(dt) == -1:

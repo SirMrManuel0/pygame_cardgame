@@ -73,5 +73,19 @@
     },
     "images" : {
         "Background" : "images/background"
+    },
+    "ghosts" : {
+        "ghost-1" : "ghosts/ghost-1.png",
+        "ghost-2" : "ghosts/ghost-2.png",
+        "ghost-3" : "ghosts/ghost-3.png",
+        "ghost-4" : "ghosts/ghost-4.png",
+        "ghost-5" : "ghosts/ghost-5.png",
+        "ghost-6" : "ghosts/ghost-6.png",
+        "ghost-7" : "ghosts/ghost-7.png",
+        "ghost-8" : "ghosts/ghost-8.png",
+        "ghost-9" : "ghosts/ghost-9.png",
+        "ghost-10" : "ghosts/ghost-10.png",
+        "ghost-11" : "ghosts/ghost-11.png",
+        "ghost-12" : "ghosts/ghost-12.png"
     }
 }
