@@ -75,6 +75,8 @@ class LogicWAI(CaboLogic):
         if put_down_choice > 0:
             self.swap_self(pid, put_down_choice - 1)
         swapped_card: int = self._players[pid].get_active_card().get_value()
+        if self._players[pid].get_active_card().get_value() == -1:
+            self._players[pid].set_active_card(self._game_deck.draw())
         self.discard(pid)
         mask = self._players[pid].get_self_mask()
         self._players[pid].update_memory_self()
