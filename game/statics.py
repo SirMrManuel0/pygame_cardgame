@@ -33,7 +33,7 @@ def get_path_resource(*way) -> str:
     assertion.assert_type_list(way, str, ArgumentError,
                                code=ArgumentCodes.LIST_NOT_STRING, msg=f"Only strings can be in the way.",  right_arg=["ex", "ample"])
 
-    with open(get_path_abs("..\\resources\\resources.json"), "r", encoding="utf-8") as js:
+    with open(get_path_abs("../resources/resources.json"), "r", encoding="utf-8") as js:
         look_up: dict = json.load(js)
     sub_path: dict = look_up
     for i, step in enumerate(way):

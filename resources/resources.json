@@ -69,7 +69,7 @@
         "easy_nn": "ai/easy_nn.pth"
     },
     "cursor" : {
-        "Cursor" : "cursor/cursor.png"
+        "Cursor" : "cursor/Cursor.png"
     },
     "images" : {
         "Background" : "images/background"
